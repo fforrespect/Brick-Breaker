@@ -10,14 +10,14 @@ def process_all():
 
 
 class Instance:
-    def __init__(self, pos: list[int] | None = None, vel: list[int] | None = None):
+    def __init__(self, pos: list[int] | None = None, vel: list[int] | None = None, is_first: bool = False):
         self.rad: int = c.DEFAULT_BALL_RAD
 
         self.cent_pos: list[int] = pos if pos is not None else self.__get_pos_rel_to_paddle()
         self.vel: list[int] = vel if vel is not None else [0, 0]
+        self.has_been_shot: bool = not is_first
 
         self.colour = Colours.RED
-        self.has_been_shot: bool = False
 
         gv.all_objects.append(self)
         gv.all_balls.append(self)
@@ -27,7 +27,7 @@ class Instance:
 
     def update(self, new_x: int = None, new_y: int = None) -> None:
         self.cent_pos = (new_x if new_x is not None else self.cent_pos[0],
-                       new_y if new_y is not None else self.cent_pos[1])
+                         new_y if new_y is not None else self.cent_pos[1])
 
     def move(self, move_x: int = 0, move_y: int = 0) -> None:
         self.cent_pos[0] += move_x
@@ -54,4 +54,4 @@ class Instance:
 
 
 def init() -> None:
-    Instance()
+    Instance(is_first=True)
