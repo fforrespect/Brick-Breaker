@@ -3,6 +3,10 @@ import pygame
 from Setup import Constants as c, GlobalVars as gv, Colours
 
 
+def init():
+    Paddle()
+
+
 class Paddle:
     def __init__(self) -> None:
         self.nw_pos: list[int] = list(c.INITIAL_PADDLE_POSITION)

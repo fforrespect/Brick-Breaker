@@ -10,9 +10,8 @@ pygame.init()
 screen: pygame.Surface = pygame.display.set_mode(c.SCREEN_SIZE)
 clock: pygame.time.Clock = pygame.time.Clock()
 
-Player.Paddle()
-Ball.Instance()
-
+Player.init()
+Ball.init()
 
 while True:
     clock.tick(c.FPS)

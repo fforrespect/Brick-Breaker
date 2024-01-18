@@ -4,6 +4,10 @@ from typing import Literal
 from Setup import Constants as c, GlobalVars as gv, Colours
 
 
+def init():
+    Instance()
+
+
 class Instance:
     def __init__(self, pos: list[int] | None = None, vel: list[int] | None = None):
         self.rad: int = c.DEFAULT_BALL_RAD
