@@ -3,8 +3,8 @@ import pygame
 from Setup import Constants as c, GlobalVars as gv, Colours
 
 
-def init():
-    Paddle()
+def _get_mouse_x() -> int:
+    return pygame.mouse.get_pos()[0]
 
 
 class Paddle:
@@ -27,12 +27,17 @@ class Paddle:
     def draw(self, screen: pygame.Surface) -> None:
         pygame.draw.rect(screen, self.colour,  self.rect, border_radius=c.PADDLE_BORDER_RAD)
 
-    def update(self, new_pos: tuple[int, int]) -> None:
-        self.nw_pos = new_pos
+    def update(self, new_x: int = None, new_y: int = None) -> None:
+        self.nw_pos = (new_x if new_x is not None else self.nw_pos[0],
+                       new_y if new_y is not None else self.nw_pos[1])
 
-    def move(self, x: int, y: int):
-        self.nw_pos[0] += x
-        self.nw_pos[1] += y
+    def move(self, move_x: int = 0, move_y: int = 0) -> None:
+        self.nw_pos[0] += move_x
+        self.nw_pos[1] += move_y
 
     def process(self):
-        pass
+        self.update(new_x=_get_mouse_x())
+
+
+def init() -> Paddle:
+    return Paddle()
