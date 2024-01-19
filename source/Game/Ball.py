@@ -4,11 +4,6 @@ from typing import Literal
 from Setup import Constants as c, GlobalVars as gv, Colours
 
 
-def process_all():
-    for ball in gv.all_balls:
-        ball.process()
-
-
 class Instance:
     def __init__(self, pos: list[int] | None = None, vel: list[int] | None = None, is_first: bool = False):
         self.rad: int = c.DEFAULT_BALL_RAD
@@ -25,13 +20,17 @@ class Instance:
     def draw(self, screen: pygame.Surface) -> None:
         pygame.draw.circle(screen, self.colour, self.cent_pos, self.rad)
 
-    def update(self, new_x: int = None, new_y: int = None) -> None:
-        self.cent_pos = (new_x if new_x is not None else self.cent_pos[0],
-                         new_y if new_y is not None else self.cent_pos[1])
+    def update(self, new_x: float = None, new_y: float = None) -> None:
+        self.cent_pos = [new_x if new_x is not None else self.cent_pos[0],
+                         new_y if new_y is not None else self.cent_pos[1]]
 
-    def move(self, move_x: int = 0, move_y: int = 0) -> None:
+    def move(self, move_x: float = 0, move_y: float = 0) -> None:
         self.cent_pos[0] += move_x
         self.cent_pos[1] += move_y
+
+    def set_vel(self, x: float = None, y: float = None):
+        self.vel = [x if x is not None else self.vel[0],
+                    y if y is not None else self.vel[1]]
 
     def bounce(self, surface: Literal['paddle', 'side', 'top']) -> None:
         match surface:
@@ -49,9 +48,17 @@ class Instance:
         if not self.has_been_shot:
             self.update(new_x=self.__get_pos_rel_to_paddle()[0])
 
-    def __get_pos_rel_to_paddle(self) -> tuple[int, int]:
-        return gv.paddle.centre[0], gv.paddle.nw_pos[1] - self.rad
+        self.move(*self.vel)
+
+    def __get_pos_rel_to_paddle(self) -> list[int]:
+        return [gv.paddle.centre[0], gv.paddle.nw_pos[1] - self.rad]
 
 
-def init() -> None:
-    Instance(is_first=True)
+def init_first_ball() -> Instance:
+    return Instance(is_first=True)
+
+
+def process_all() -> None:
+    ball: Instance
+    for ball in gv.all_balls:
+        ball.process()
