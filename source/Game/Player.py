@@ -16,7 +16,8 @@ class Paddle:
         self.size: list[int] = list(c.PADDLE_SIZE)
 
         gv.all_objects.append(self)
-        gv.paddle = self
+        global active_paddle
+        active_paddle = self
 
         self.bound_ball: Ball.Instance | None = Ball.init_first_ball()
 
@@ -68,6 +69,9 @@ class Paddle:
             return c.SCREEN_SIZE[0] - self.size[0]
         else:
             return new_x
+
+
+active_paddle: Paddle | None = None
 
 
 def init() -> Paddle:

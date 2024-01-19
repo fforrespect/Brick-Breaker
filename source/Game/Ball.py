@@ -1,6 +1,7 @@
 import pygame
 from typing import Literal
 
+from Game import Player
 from Process import Vector
 from Setup import Constants as c, GlobalVars as gv, Colours
 
@@ -18,7 +19,8 @@ class Instance:
         self.can_be_hit: bool = False
 
         gv.all_objects.append(self)
-        gv.all_balls.append(self)
+        global all_balls
+        all_balls.append(self)
 
     @property
     def rect(self) -> pygame.Rect:
@@ -82,12 +84,12 @@ class Instance:
         self.move_by_vel()
 
     def __get_coords_while_stuck(self) -> list[int]:
-        return [gv.paddle.centre[0], gv.paddle.nw_pos[1] - self.radius]
+        return [Player.active_paddle.centre[0], Player.active_paddle.nw_pos[1] - self.radius]
 
     def __get_normalised_angle_rel_to_paddle(self) -> float:
         # returns how far left or right the ball is on the paddle,
         # as a value from -1 to 1
-        return (self.cent_pos[0] - gv.paddle.centre[0])/gv.paddle.size[0]
+        return (self.cent_pos[0] - Player.active_paddle.centre[0])/Player.active_paddle.size[0]
 
     def __check_for_bounce(self) -> None:
         if (self.nw_pos[0] + self.vel[0]) < 0 or (self.se_pos[0] + self.vel[0]) > c.SCREEN_SIZE[0]:
@@ -96,10 +98,13 @@ class Instance:
         if self.nw_pos[1] + self.vel[1] < 0:
             self.bounce('top')
             self.can_be_hit = True
-        if self.rect.colliderect(gv.paddle.rect):
+        if self.rect.colliderect(Player.active_paddle.rect):
             if self.can_be_hit:
                 self.bounce('paddle')
             self.can_be_hit = False
+
+
+all_balls: list[Instance] = []
 
 
 def init_first_ball() -> Instance:
@@ -108,5 +113,5 @@ def init_first_ball() -> Instance:
 
 def process_all() -> None:
     ball: Instance
-    for ball in gv.all_balls:
+    for ball in all_balls:
         ball.process()
