@@ -26,7 +26,9 @@ class Paddle:
 
     @centre.setter
     def centre(self, value: list[int]) -> None:
-        self.nw_pos = [value[0] - self.size[0] // 2, value[1] - self.size[1] // 2]
+        x, y = (value[0] - self.size[0] // 2, value[1] - self.size[1] // 2)
+        x = self.__check_hit_wall(x)
+        self.nw_pos = x, y
 
     @property
     def rect(self) -> pygame.Rect:
@@ -36,10 +38,12 @@ class Paddle:
         pygame.draw.rect(screen, self.colour, self.rect, border_radius=c.PADDLE_BORDER_RAD)
 
     def update(self, new_x: int = None, new_y: int = None) -> None:
+        new_x = self.__check_hit_wall(new_x)
         self.nw_pos = (new_x if new_x is not None else self.nw_pos[0],
                        new_y if new_y is not None else self.nw_pos[1])
 
     def move(self, move_x: int = 0, move_y: int = 0) -> None:
+        move_x = self.__check_hit_wall(move_x)
         self.nw_pos[0] += move_x
         self.nw_pos[1] += move_y
 
@@ -56,6 +60,14 @@ class Paddle:
         else:
             if pygame.mouse.get_pressed(num_buttons=3)[0]:
                 self.shoot()
+
+    def __check_hit_wall(self, new_x: int) -> int:
+        if new_x < 0:
+            return 0
+        elif (new_x + self.size[0]) > c.SCREEN_SIZE[0]:
+            return c.SCREEN_SIZE[0] - self.size[0]
+        else:
+            return new_x
 
 
 def init() -> Paddle:
