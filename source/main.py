@@ -9,6 +9,7 @@ pygame.init()
 
 screen: pygame.Surface = pygame.display.set_mode(c.SCREEN_SIZE)
 clock: pygame.time.Clock = pygame.time.Clock()
+pygame.display.set_caption("Brick Breaker")
 
 paddle = Player.init()
 
