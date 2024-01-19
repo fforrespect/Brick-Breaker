@@ -2,7 +2,8 @@ import pygame
 
 from Display import Window
 from Event import GameOver
-from Game import Player, Ball, Level
+from Game import Player, Ball
+from Process import Level
 from Setup import Constants as c
 
 pygame.init()
