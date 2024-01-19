@@ -99,8 +99,7 @@ class Instance:
         if self.rect.colliderect(gv.paddle.rect):
             if self.can_be_hit:
                 self.bounce('paddle')
-            else:
-                self.can_be_hit = False
+            self.can_be_hit = False
 
 
 def init_first_ball() -> Instance:

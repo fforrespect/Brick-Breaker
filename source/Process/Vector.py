@@ -15,9 +15,7 @@ def unit_vector(pos1: tuple[float, float] | list[int], pos2: tuple[float, float]
 
 def unit_vector_from_angle(normalised_angle: float) -> tuple[float, float]:
     angle = normalised_angle*0.5*pi
-    x: float = -cos(angle) if normalised_angle < 0 else cos(angle)
-    y: float = sin(angle) if normalised_angle < 0 else -sin(angle)
-    return x, y
+    return sin(angle), -cos(angle)
 
 
 def distance(pos1: tuple[float, float], pos2: tuple[float, float]) -> float:
