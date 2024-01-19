@@ -1,15 +1,17 @@
 import pygame
 
-from Setup import Constants as c, Colours
+from Process import Level
+from Setup import Constants as c, GlobalVars as gv, Colours
 
 
 class Instance:
     def __init__(self, strength, grid_pos: tuple[int, int]):
-        self.strength: int = strength
+        self.strength: int = int(strength)
         self.grid_pos: tuple[int, int] = grid_pos
 
         self.px_size: tuple[float, float] = c.BRICK_SIZE
 
+        global all_bricks
         all_bricks.append(self)
 
     @property
@@ -43,3 +45,38 @@ class Instance:
 
 
 all_bricks: list[Instance] = []
+
+
+class Grid:
+    def __init__(self):
+        self.size: tuple[int, int] = c.NUM_OF_BRICKS
+
+        gv.all_objects.append(self)
+        global grid
+        grid = self
+
+    @staticmethod
+    def draw(screen: pygame.Surface) -> None:
+        for brick in all_bricks:
+            brick.draw(screen)
+
+    @staticmethod
+    def set_level(level: int | str):
+        level_strings: tuple[str, ...] = Level.get(level)
+
+        for row, row_string in enumerate(level_strings):
+            for col, brick_val in enumerate(row_string):
+                if brick_val != " ":
+                    Instance(brick_val, (col, row))
+
+    def process(self) -> None:
+        pass
+
+
+grid: Grid | None = None
+
+
+def init_grid():
+    Grid()
+    global grid
+    grid.set_level(0)
