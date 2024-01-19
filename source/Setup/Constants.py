@@ -20,6 +20,7 @@ BALL_SPEED: int = 10
 NUM_OF_BRICKS: tuple[int, int] = (32, 30)
 BRICK_SIZE: tuple[float, float] = (SCREEN_SIZE[0]/NUM_OF_BRICKS[0],
                                    (SCREEN_SIZE[1]*(3/4))/NUM_OF_BRICKS[1])
+BRICK_BORDER_RAD: int = 5
 
 # Files #
 _RESOURCES_FP: str = "../Resources/"

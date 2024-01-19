@@ -8,6 +8,8 @@ class Instance:
         self.strength: int = strength
         self.grid_pos: tuple[int, int] = grid_pos
 
+        self.px_size: tuple[float, float] = c.BRICK_SIZE
+
         all_bricks.append(self)
 
     @property
@@ -18,8 +20,12 @@ class Instance:
     def nw_px_pos(self) -> tuple[float, float]:
         return self.grid_pos[0]*c.BRICK_SIZE[0], self.grid_pos[1]*c.BRICK_SIZE[1]
 
+    @property
+    def rect(self) -> pygame.Rect:
+        return pygame.Rect(self.nw_px_pos, self.px_size)
+
     def draw(self, screen: pygame.Surface) -> None:
-        pass
+        pygame.draw.rect(screen, self.colour, self.rect, border_radius=c.BRICK_BORDER_RAD)
 
     def process(self) -> None:
         # Processing logic
