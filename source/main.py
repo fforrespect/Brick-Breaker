@@ -2,7 +2,7 @@ import pygame
 
 from Display import Window
 from Event import GameOver
-from Game import Player, Ball
+from Game import Player, Ball, Level
 from Setup import Constants as c
 
 pygame.init()
@@ -12,6 +12,7 @@ clock: pygame.time.Clock = pygame.time.Clock()
 pygame.display.set_caption("Brick Breaker")
 
 paddle = Player.init()
+Level.get(0)
 
 while True:
     clock.tick(c.FPS)
