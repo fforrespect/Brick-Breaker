@@ -31,18 +31,20 @@ class Instance:
         return pygame.Rect(nw_pos, [self.radius * 2] * 2)
 
     @property
-    def nw_pos(self) -> tuple[float, float]:
-        return (
-            self.cent_pos[0] - self.radius,
-            self.cent_pos[1] - self.radius
-        )
+    def top(self) -> float:
+        return self.rect.top
 
     @property
-    def se_pos(self) -> tuple[float, float]:
-        return (
-            self.cent_pos[0] + self.radius,
-            self.cent_pos[1] + self.radius
-        )
+    def bottom(self) -> float:
+        return self.rect.bottom
+
+    @property
+    def left(self) -> float:
+        return self.rect.left
+
+    @property
+    def right(self) -> float:
+        return self.rect.right
 
     def draw(self, screen: pygame.Surface) -> None:
         pygame.draw.circle(screen, self.colour, self.cent_pos, self.radius)
@@ -64,18 +66,16 @@ class Instance:
         self.vel = [x*self.speed if x is not None else self.vel[0],
                     y*self.speed if y is not None else self.vel[1]]
 
-    def bounce(self, surface: Literal['paddle', 'brick', 'side', 'top']) -> None:
+    def bounce(self, surface: Literal['paddle', 'x', 'y']) -> None:
         match surface:
-            case 'side':
+            case 'x':
                 self.vel[0] *= -1
-            case 'top':
+            case 'y':
                 self.vel[1] *= -1
             case 'paddle':
                 normalised_angle = self.__get_normalised_angle_rel_to_paddle()
                 unit_vector = Vector.unit_vector_from_angle(normalised_angle)
                 self.vel = [unit_vector[0]*self.speed, unit_vector[1]*self.speed]
-            case 'brick':
-                pass
             case _:
                 raise ValueError("Invalid surface")
 
@@ -94,12 +94,12 @@ class Instance:
         return (self.cent_pos[0] - Player.active_paddle.centre[0])/Player.active_paddle.size[0]
 
     def __check_for_hit(self) -> None:
-        if (self.nw_pos[0] + self.vel[0]) < 0 or (self.se_pos[0] + self.vel[0]) > c.SCREEN_SIZE[0]:
-            self.bounce('side')
+        if (self.left + self.vel[0]) < 0 or (self.right + self.vel[0]) > c.SCREEN_SIZE[0]:
+            self.bounce('x')
             self.can_hit_paddle = True
 
-        if self.nw_pos[1] + self.vel[1] < 0:
-            self.bounce('top')
+        if self.top + self.vel[1] < 0:
+            self.bounce('y')
             self.can_hit_paddle = True
 
         if self.rect.colliderect(Player.active_paddle.rect):
@@ -107,9 +107,22 @@ class Instance:
                 self.bounce('paddle')
             self.can_hit_paddle = False
 
-        brick_hit: int = self.rect.collidelist(Brick.all_bricks)
-        if brick_hit != -1:
-            Brick.all_bricks[brick_hit].gets_hit()
+        brick_hit_index: int = self.rect.collidelist(Brick.grid.all_brick_rects)
+        if brick_hit_index != -1:
+            brick_hit: Brick.Instance = Brick.all_bricks[brick_hit_index]
+
+            if (
+                    ((self.right + self.vel[0]) < brick_hit.left or
+                    (self.left + self.vel[0]) > brick_hit.right)
+            ):
+                self.bounce('x')
+            if (
+                    (self.bottom + self.vel[1]) > brick_hit.top or
+                    (self.top + self.vel[1]) < brick_hit.bottom
+            ):
+                self.bounce('y')
+
+            brick_hit.gets_hit()
             self.can_hit_paddle = True
 
 

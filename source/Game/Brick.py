@@ -19,12 +19,25 @@ class Instance:
         return Colours.STRENGTH[self.strength]
 
     @property
-    def nw_px_pos(self) -> tuple[float, float]:
-        return self.grid_pos[0]*c.BRICK_SIZE[0], self.grid_pos[1]*c.BRICK_SIZE[1]
+    def rect(self) -> pygame.Rect:
+        nw_px: tuple[float, float] = self.grid_pos[0]*c.BRICK_SIZE[0], self.grid_pos[1]*c.BRICK_SIZE[1]
+        return pygame.Rect(nw_px, self.px_size)
 
     @property
-    def rect(self) -> pygame.Rect:
-        return pygame.Rect(self.nw_px_pos, self.px_size)
+    def top(self) -> float:
+        return self.rect.top
+
+    @property
+    def bottom(self) -> float:
+        return self.rect.bottom
+
+    @property
+    def left(self) -> float:
+        return self.rect.left
+
+    @property
+    def right(self) -> float:
+        return self.rect.right
 
     @property
     def is_destroyed(self) -> bool:
@@ -62,6 +75,14 @@ class Grid:
         global grid
         grid = self
 
+    @property
+    def bricks_left(self) -> int:
+        return len(all_bricks)
+
+    @property
+    def all_brick_rects(self) -> list[pygame.Rect]:
+        return list(map(lambda brick: brick.rect, all_bricks))
+
     @staticmethod
     def draw(screen: pygame.Surface) -> None:
         for brick in all_bricks:
@@ -75,6 +96,7 @@ class Grid:
             for col, brick_val in enumerate(row_string):
                 if brick_val != " ":
                     Instance(brick_val, (col, row))
+
 
     def process(self) -> None:
         pass
