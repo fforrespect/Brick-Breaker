@@ -16,7 +16,7 @@ class Instance:
 
         self.colour: tuple[int, int, int] = Colours.RED
         self.speed: int = c.BALL_SPEED
-        self.can_be_hit: bool = False
+        self.can_hit_paddle: bool = False
 
         gv.all_objects.append(self)
         global all_balls
@@ -96,21 +96,21 @@ class Instance:
     def __check_for_hit(self) -> None:
         if (self.nw_pos[0] + self.vel[0]) < 0 or (self.se_pos[0] + self.vel[0]) > c.SCREEN_SIZE[0]:
             self.bounce('side')
-            self.can_be_hit = True
+            self.can_hit_paddle = True
 
         if self.nw_pos[1] + self.vel[1] < 0:
             self.bounce('top')
-            self.can_be_hit = True
+            self.can_hit_paddle = True
 
         if self.rect.colliderect(Player.active_paddle.rect):
-            if self.can_be_hit:
+            if self.can_hit_paddle:
                 self.bounce('paddle')
-            self.can_be_hit = False
+            self.can_hit_paddle = False
 
         brick_hit: int = self.rect.collidelist(Brick.all_bricks)
         if brick_hit != -1:
             Brick.all_bricks[brick_hit].gets_hit()
-            self.can_be_hit = True
+            self.can_hit_paddle = True
 
 
 all_balls: list[Instance] = []
