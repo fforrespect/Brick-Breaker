@@ -16,7 +16,7 @@ class Instance:
 
     @property
     def colour(self) -> tuple[int, int, int]:
-        return Colours.STRENGTH[self.strength] if not self.is_destroyed else Colours.BACKGROUND
+        return Colours.STRENGTH[self.strength]
 
     @property
     def nw_px_pos(self) -> tuple[float, float]:
