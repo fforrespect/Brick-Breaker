@@ -28,6 +28,11 @@ class Instance:
         self.cent_pos[0] += move_x
         self.cent_pos[1] += move_y
 
+    def move_by_vel(self) -> None:
+        self.__check_for_bounce()
+        self.cent_pos[0] += self.vel[0]
+        self.cent_pos[1] += self.vel[1]
+
     def set_vel(self, x: float = None, y: float = None):
         self.vel = [x if x is not None else self.vel[0],
                     y if y is not None else self.vel[1]]
@@ -48,10 +53,16 @@ class Instance:
         if not self.has_been_shot:
             self.update(new_x=self.__get_pos_rel_to_paddle()[0])
 
-        self.move(*self.vel)
+        self.move_by_vel()
 
     def __get_pos_rel_to_paddle(self) -> list[int]:
         return [gv.paddle.centre[0], gv.paddle.nw_pos[1] - self.rad]
+
+    def __check_for_bounce(self) -> None:
+        if not (0 < (self.cent_pos[0] + self.vel[0]) < c.SCREEN_SIZE[0]):
+            self.bounce('side')
+        if self.cent_pos[1] + self.vel[1] < 0:
+            self.bounce('top')
 
 
 def init_first_ball() -> Instance:
