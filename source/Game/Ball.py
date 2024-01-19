@@ -35,6 +35,13 @@ class Instance:
             self.cent_pos[1] - self.radius
         )
 
+    @property
+    def se_pos(self) -> tuple[float, float]:
+        return (
+            self.cent_pos[0] + self.radius,
+            self.cent_pos[1] + self.radius
+        )
+
     def draw(self, screen: pygame.Surface) -> None:
         pygame.draw.circle(screen, self.colour, self.cent_pos, self.radius)
 
@@ -83,10 +90,10 @@ class Instance:
         return (self.cent_pos[0] - gv.paddle.centre[0])/gv.paddle.size[0]
 
     def __check_for_bounce(self) -> None:
-        if not (0 < (self.cent_pos[0] + self.vel[0]) < c.SCREEN_SIZE[0]):
+        if (self.nw_pos[0] + self.vel[0]) < 0 or (self.se_pos[0] + self.vel[0]) > c.SCREEN_SIZE[0]:
             self.bounce('side')
             self.can_be_hit = True
-        if self.cent_pos[1] + self.vel[1] < 0:
+        if self.nw_pos[1] + self.vel[1] < 0:
             self.bounce('top')
             self.can_be_hit = True
         if self.rect.colliderect(gv.paddle.rect):
