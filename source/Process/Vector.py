@@ -1,4 +1,4 @@
-from math import sqrt
+from math import sqrt, pi, sin, cos
 
 
 # Some maths to work out the unit vector between two positions
@@ -11,6 +11,13 @@ def unit_vector(pos1: tuple[float, float] | list[int], pos2: tuple[float, float]
     # Then divide each part of the vector by the magnitude, and return it
     #   (as a float tuple)
     return tuple[float, float](map(lambda x: x/vector_mag, vector))
+
+
+def unit_vector_from_angle(normalised_angle: float) -> tuple[float, float]:
+    angle = normalised_angle*0.5*pi
+    x: float = -cos(angle) if normalised_angle < 0 else cos(angle)
+    y: float = sin(angle) if normalised_angle < 0 else -sin(angle)
+    return x, y
 
 
 def distance(pos1: tuple[float, float], pos2: tuple[float, float]) -> float:
