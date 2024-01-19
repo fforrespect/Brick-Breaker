@@ -44,9 +44,6 @@ class Paddle:
         self.nw_pos[1] += move_y
 
     def shoot(self):
-        if self.bound_ball is None:
-            return
-
         shoot_direction: list[float] = list(Vector.unit_vector(pygame.mouse.get_pos(), self.centre))
         self.bound_ball.set_vel(shoot_direction[0]*c.BALL_SPEED, shoot_direction[1]*c.BALL_SPEED)
 
@@ -54,10 +51,11 @@ class Paddle:
         self.bound_ball = None
 
     def process(self):
-        self.centre = [_get_mouse_x(), self.centre[1]]
-
-        if pygame.mouse.get_pressed(num_buttons=3)[0]:
-            self.shoot()
+        if self.bound_ball is None:
+            self.centre = [_get_mouse_x(), self.centre[1]]
+        else:
+            if pygame.mouse.get_pressed(num_buttons=3)[0]:
+                self.shoot()
 
 
 def init() -> Paddle:
