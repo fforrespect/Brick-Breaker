@@ -1,7 +1,7 @@
 import pygame
 from typing import Literal
 
-from Game import Player
+from Game import Player, Brick
 from Process import Vector
 from Setup import Constants as c, GlobalVars as gv, Colours
 
@@ -56,7 +56,7 @@ class Instance:
         self.cent_pos[1] += move_y
 
     def move_by_vel(self) -> None:
-        self.__check_for_bounce()
+        self.__check_for_hit()
         self.cent_pos[0] += self.vel[0]
         self.cent_pos[1] += self.vel[1]
 
@@ -64,7 +64,7 @@ class Instance:
         self.vel = [x*self.speed if x is not None else self.vel[0],
                     y*self.speed if y is not None else self.vel[1]]
 
-    def bounce(self, surface: Literal['paddle', 'side', 'top']) -> None:
+    def bounce(self, surface: Literal['paddle', 'brick', 'side', 'top']) -> None:
         match surface:
             case 'side':
                 self.vel[0] *= -1
@@ -74,6 +74,8 @@ class Instance:
                 normalised_angle = self.__get_normalised_angle_rel_to_paddle()
                 unit_vector = Vector.unit_vector_from_angle(normalised_angle)
                 self.vel = [unit_vector[0]*self.speed, unit_vector[1]*self.speed]
+            case 'brick':
+                pass
             case _:
                 raise ValueError("Invalid surface")
 
@@ -91,17 +93,24 @@ class Instance:
         # as a value from -1 to 1
         return (self.cent_pos[0] - Player.active_paddle.centre[0])/Player.active_paddle.size[0]
 
-    def __check_for_bounce(self) -> None:
+    def __check_for_hit(self) -> None:
         if (self.nw_pos[0] + self.vel[0]) < 0 or (self.se_pos[0] + self.vel[0]) > c.SCREEN_SIZE[0]:
             self.bounce('side')
             self.can_be_hit = True
+
         if self.nw_pos[1] + self.vel[1] < 0:
             self.bounce('top')
             self.can_be_hit = True
+
         if self.rect.colliderect(Player.active_paddle.rect):
             if self.can_be_hit:
                 self.bounce('paddle')
             self.can_be_hit = False
+
+        brick_hit: int = self.rect.collidelist(Brick.all_bricks)
+        if brick_hit != -1:
+            Brick.all_bricks[brick_hit].gets_hit()
+            self.can_be_hit = True
 
 
 all_balls: list[Instance] = []

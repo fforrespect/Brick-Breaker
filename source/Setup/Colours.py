@@ -16,6 +16,8 @@ TEAL   : tuple[int, int, int] = (  0, 128, 128)
 WHITE  : tuple[int, int, int] = (255, 255, 255)
 YELLOW : tuple[int, int, int] = (255, 255,   0)
 
+BACKGROUND: tuple[int, int, int] = D_GRAY
+
 one     : tuple[int, int, int] = (  6,   1, 245)
 two     : tuple[int, int, int] = ( 55, 126,  34)
 three   : tuple[int, int, int] = (234,  51,  35)
@@ -25,7 +27,7 @@ six     : tuple[int, int, int] = ( 54, 124, 125)
 seven   : tuple[int, int, int] = (  0,   0,   0)
 eight   : tuple[int, int, int] = ( 86,  84,  87)
 
-strength: dict[int, tuple[int, int, int]] = {
+STRENGTH: dict[int, tuple[int, int, int]] = {
     1: one,
     2: two,
     3: three,

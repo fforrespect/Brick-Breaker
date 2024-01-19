@@ -16,7 +16,7 @@ class Instance:
 
     @property
     def colour(self) -> tuple[int, int, int]:
-        return Colours.strength[self.strength]
+        return Colours.STRENGTH[self.strength] if not self.is_destroyed else Colours.BACKGROUND
 
     @property
     def nw_px_pos(self) -> tuple[float, float]:
@@ -26,19 +26,26 @@ class Instance:
     def rect(self) -> pygame.Rect:
         return pygame.Rect(self.nw_px_pos, self.px_size)
 
+    @property
+    def is_destroyed(self) -> bool:
+        return self.strength <= 0
+
     def draw(self, screen: pygame.Surface) -> None:
         pygame.draw.rect(screen, self.colour, self.rect, border_radius=c.BRICK_BORDER_RAD)
 
     def process(self) -> None:
         # Processing logic
+        pass
 
+    def gets_hit(self):
+        self.strength -= 1
         self.__check_for_destruction()
 
     def __check_for_destruction(self) -> bool:
         """
         :return: has been removed?
         """
-        if self.strength <= 0:
+        if self.is_destroyed:
             all_bricks.remove(self)
             return True
         return False
