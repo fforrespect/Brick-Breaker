@@ -97,7 +97,6 @@ class Grid:
                 if brick_val != " ":
                     Instance(brick_val, (col, row))
 
-
     def process(self) -> None:
         pass
 
