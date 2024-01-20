@@ -111,17 +111,28 @@ class Instance:
         if brick_hit_index != -1:
             brick_hit: Brick.Instance = Brick.all_bricks[brick_hit_index]
 
-            if (
-                    ((self.right + self.vel[0]) < brick_hit.left or
-                    (self.left + self.vel[0]) > brick_hit.right)
-            ):
-                self.bounce('x')
-            if (
-                    (self.bottom + self.vel[1]) > brick_hit.top or
-                    (self.top + self.vel[1]) < brick_hit.bottom
-            ):
-                self.bounce('y')
+            # Determine the side of collision
+            hit_side: Literal['x', 'y'] | None = None
+            if self.rect.collidepoint(brick_hit.rect.midtop) or self.rect.collidepoint(brick_hit.rect.midbottom):
+                hit_side = 'y'
+            elif self.rect.collidepoint(brick_hit.rect.midleft) or self.rect.collidepoint(brick_hit.rect.midright):
+                hit_side = 'x'
 
+            # Handle corner collisions
+            if hit_side is None:
+                if self.vel[0] > 0:  # Moving right
+                    if self.vel[1] > 0:  # Moving down
+                        hit_side = 'y' if brick_hit.rect.collidepoint(self.left, self.bottom) else 'x'
+                    else:  # Moving up
+                        hit_side = 'y' if brick_hit.rect.collidepoint(self.left, self.top) else 'x'
+                else:  # Moving left
+                    if self.vel[1] > 0:  # Moving down
+                        hit_side = 'y' if brick_hit.rect.collidepoint(self.right, self.bottom) else 'x'
+                    else:  # Moving up
+                        hit_side = 'y' if brick_hit.rect.collidepoint(self.right, self.top) else 'x'
+
+            if hit_side is not None:
+                self.bounce(hit_side)
             brick_hit.gets_hit()
             self.can_hit_paddle = True
 
