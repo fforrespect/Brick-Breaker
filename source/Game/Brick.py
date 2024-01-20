@@ -24,31 +24,11 @@ class Instance:
         return pygame.Rect(nw_px, self.px_size)
 
     @property
-    def top(self) -> float:
-        return self.rect.top
-
-    @property
-    def bottom(self) -> float:
-        return self.rect.bottom
-
-    @property
-    def left(self) -> float:
-        return self.rect.left
-
-    @property
-    def right(self) -> float:
-        return self.rect.right
-
-    @property
     def is_destroyed(self) -> bool:
         return self.strength <= 0
 
     def draw(self, screen: pygame.Surface) -> None:
         pygame.draw.rect(screen, self.colour, self.rect, border_radius=c.BRICK_BORDER_RAD)
-
-    def process(self) -> None:
-        # Processing logic
-        pass
 
     def gets_hit(self):
         self.strength -= 1
@@ -96,9 +76,6 @@ class Grid:
             for col, brick_val in enumerate(row_string):
                 if brick_val != " ":
                     Instance(brick_val, (col, row))
-
-    def process(self) -> None:
-        pass
 
 
 grid: Grid | None = None
