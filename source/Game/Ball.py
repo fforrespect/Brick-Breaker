@@ -54,13 +54,12 @@ class Instance:
                          new_y if new_y is not None else self.cent_pos[1]]
 
     def move(self, move_x: float = 0, move_y: float = 0) -> None:
+        self.__check_for_hit()
         self.cent_pos[0] += move_x
         self.cent_pos[1] += move_y
 
     def move_by_vel(self) -> None:
-        self.__check_for_hit()
-        self.cent_pos[0] += self.vel[0]
-        self.cent_pos[1] += self.vel[1]
+        self.move(*self.vel)
 
     def set_vel(self, x: float = None, y: float = None):
         self.vel = [x*self.speed if x is not None else self.vel[0],
