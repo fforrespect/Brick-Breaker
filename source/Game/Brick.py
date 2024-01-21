@@ -9,7 +9,8 @@ class Instance:
         self.strength: int = int(strength)
         self.grid_pos: tuple[int, int] = grid_pos
 
-        self.px_size: tuple[float, float] = c.BRICK_SIZE
+        self.px_size: tuple[float, float] = (c.BRICK_SIZE[0] - (c.BRICK_SPACER*2),
+                                             c.BRICK_SIZE[1] - (c.BRICK_SPACER*2))
 
         global all_bricks
         all_bricks.append(self)
@@ -20,7 +21,8 @@ class Instance:
 
     @property
     def rect(self) -> pygame.Rect:
-        nw_px: tuple[float, float] = self.grid_pos[0]*c.BRICK_SIZE[0], self.grid_pos[1]*c.BRICK_SIZE[1]
+        nw_px: tuple[float, float] = ((self.grid_pos[0]*c.BRICK_SIZE[0]) + c.BRICK_SPACER,
+                                      (self.grid_pos[1]*c.BRICK_SIZE[1]) + c.BRICK_SPACER)
         return pygame.Rect(nw_px, self.px_size)
 
     @property
@@ -45,7 +47,7 @@ class Instance:
 
     def draw(self, screen: pygame.Surface) -> None:
         pygame.draw.rect(screen, self.colour, self.rect, border_radius=c.BRICK_BORDER_RAD)
-        pygame.draw.rect(screen, Colours.BACKGROUND, self.rect, 2, c.BRICK_BORDER_RAD)
+        # pygame.draw.rect(screen, Colours.BACKGROUND, self.rect, 2, c.BRICK_BORDER_RAD)
 
     def gets_hit(self):
         self.strength -= 1
