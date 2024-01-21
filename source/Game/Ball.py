@@ -24,11 +24,18 @@ class Instance:
 
     @property
     def rect(self) -> pygame.Rect:
-        nw_pos: tuple[float, float] = (
+        return pygame.Rect(self.nw_pos, [self.radius * 2] * 2)
+
+    @property
+    def nw_pos(self) -> tuple[float, float]:
+        return (
             self.cent_pos[0] - self.radius,
             self.cent_pos[1] - self.radius
         )
-        return pygame.Rect(nw_pos, [self.radius * 2] * 2)
+
+    @nw_pos.setter
+    def nw_pos(self, value: tuple[float, float]) -> None:
+        self.cent_pos = [value[0] + self.radius, value[1] + self.radius]
 
     @property
     def top(self) -> float:
@@ -49,14 +56,18 @@ class Instance:
     def draw(self, screen: pygame.Surface) -> None:
         pygame.draw.circle(screen, self.colour, self.cent_pos, self.radius)
 
-    def update(self, new_x: float = None, new_y: float = None) -> None:
-        self.cent_pos = [new_x if new_x is not None else self.cent_pos[0],
-                         new_y if new_y is not None else self.cent_pos[1]]
+    def update_cent(self, x: float = None, y: float = None) -> None:
+        self.cent_pos = [x if x is not None else self.cent_pos[0],
+                         y if y is not None else self.cent_pos[1]]
 
-    def move(self, move_x: float = 0, move_y: float = 0) -> None:
+    def update_nw(self, x: float = None, y: float = None) -> None:
+        self.nw_pos = [x if x is not None else self.nw_pos[0],
+                       y if y is not None else self.nw_pos[1]]
+
+    def move(self, x: float = 0, y: float = 0) -> None:
         self.__check_for_hit()
-        self.cent_pos[0] += move_x
-        self.cent_pos[1] += move_y
+        self.cent_pos[0] += x
+        self.cent_pos[1] += y
 
     def move_by_vel(self) -> None:
         self.move(*self.vel)
@@ -65,7 +76,10 @@ class Instance:
         self.vel = [x*self.speed if x is not None else self.vel[0],
                     y*self.speed if y is not None else self.vel[1]]
 
-    def bounce(self, surface: Literal['paddle', 'x', 'y']) -> None:
+    def bounce(self,
+               surface: Literal['paddle', 'x', 'y'],
+               bounce_off: float | None,
+               point_hit: Literal['top', 'bottom', 'left', 'right'] | None) -> None:
         match surface:
             case 'x':
                 self.vel[0] *= -1
@@ -78,9 +92,21 @@ class Instance:
             case _:
                 raise ValueError("Invalid surface")
 
+        match point_hit:
+            case 'top':
+                self.update_cent(y=bounce_off + self.radius)
+            case 'bottom':
+                self.update_cent(y=bounce_off - self.radius)
+            case 'left':
+                self.update_cent(x=bounce_off + self.radius)
+            case 'right':
+                self.update_cent(x=bounce_off - self.radius)
+            case _:
+                raise ValueError("Invalid point hit")
+
     def process(self):
         if not self.has_been_shot:
-            self.update(new_x=self.__get_coords_while_stuck()[0])
+            self.update_cent(x=self.__get_coords_while_stuck()[0])
 
         self.move_by_vel()
 
@@ -93,45 +119,49 @@ class Instance:
         return (self.cent_pos[0] - Player.active_paddle.centre[0])/Player.active_paddle.size[0]
 
     def __check_for_hit(self) -> None:
-        if (self.left + self.vel[0]) < 0 or (self.right + self.vel[0]) > c.SCREEN_SIZE[0]:
-            self.bounce('x')
+        # hits the left wall
+        if (self.left + self.vel[0]) < 0:
+            self.bounce('x', 0, 'left')
             self.can_hit_paddle = True
 
+        # hits the right wall
+        if (self.right + self.vel[0]) > c.SCREEN_SIZE[0]:
+            self.bounce('x', c.SCREEN_SIZE[0], 'right')
+            self.can_hit_paddle = True
+
+        # hits the roof
         if self.top + self.vel[1] < 0:
-            self.bounce('y')
+            self.bounce('y', 0, 'top')
             self.can_hit_paddle = True
 
-        if self.rect.colliderect(Player.active_paddle.rect):
+        # hits the paddle
+        if self.rect.move(self.vel).colliderect(Player.active_paddle.rect):
             if self.can_hit_paddle:
-                self.bounce('paddle')
+                self.bounce('paddle', Player.active_paddle.rect.top, 'bottom')
+                print(self.bottom)
+                print(Player.active_paddle.rect.top)
+                print()
             self.can_hit_paddle = False
 
+        # hits a brick
         brick_hit_index: int = self.rect.collidelist(Brick.grid.all_brick_rects)
         if brick_hit_index != -1:
             brick_hit: Brick.Instance = Brick.all_bricks[brick_hit_index]
 
-            # Determine the side of collision
-            hit_side: Literal['x', 'y'] | None = None
-            if self.rect.collidepoint(brick_hit.rect.midtop) or self.rect.collidepoint(brick_hit.rect.midbottom):
-                hit_side = 'y'
-            elif self.rect.collidepoint(brick_hit.rect.midleft) or self.rect.collidepoint(brick_hit.rect.midright):
-                hit_side = 'x'
+            # if it hits the brick on the...
+            # ...left
+            if (self.right + self.vel[0]) < brick_hit.left:
+                self.bounce('x', brick_hit.left, 'right')
+            # ...right
+            elif (self.left + self.vel[0]) > brick_hit.right:
+                self.bounce('x', brick_hit.right, 'left')
+            # ...top
+            elif (self.bottom + self.vel[1]) > brick_hit.top:
+                self.bounce('y', brick_hit.top, 'bottom')
+            # ...bottom
+            elif (self.top + self.vel[1]) < brick_hit.bottom:
+                self.bounce('y', brick_hit.bottom, 'top')
 
-            # Handle corner collisions
-            if hit_side is None:
-                if self.vel[0] > 0:  # Moving right
-                    if self.vel[1] > 0:  # Moving down
-                        hit_side = 'y' if brick_hit.rect.collidepoint(self.left, self.bottom) else 'x'
-                    else:  # Moving up
-                        hit_side = 'y' if brick_hit.rect.collidepoint(self.left, self.top) else 'x'
-                else:  # Moving left
-                    if self.vel[1] > 0:  # Moving down
-                        hit_side = 'y' if brick_hit.rect.collidepoint(self.right, self.bottom) else 'x'
-                    else:  # Moving up
-                        hit_side = 'y' if brick_hit.rect.collidepoint(self.right, self.top) else 'x'
-
-            if hit_side is not None:
-                self.bounce(hit_side)
             brick_hit.gets_hit()
             self.can_hit_paddle = True
 
