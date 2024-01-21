@@ -1,1 +1,6 @@
 /.idea/
+source/Display/__pycache__/
+source/Event/__pycache__/
+source/Game/__pycache__/
+source/Process/__pycache__/
+source/Setup/__pycache__/
