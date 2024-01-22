@@ -56,6 +56,14 @@ class Instance:
     def draw(self, screen: pygame.Surface) -> None:
         pygame.draw.circle(screen, self.colour, self.cent_pos, self.radius)
 
+    def process(self):
+        if not self.has_been_shot:
+            self.update_cent(x=self.__get_coords_while_stuck()[0])
+
+        self.move_by_vel()
+
+        print("ball cent:\t", tuple(map(round, self.cent_pos)))
+
     def update_cent(self, x: float = None, y: float = None) -> None:
         self.cent_pos = [x if x is not None else self.cent_pos[0],
                          y if y is not None else self.cent_pos[1]]
@@ -94,23 +102,15 @@ class Instance:
 
         match point_hit:
             case 'left':
-                self.update_cent(x=bounce_off + self.radius)
+                self.update_nw(x=bounce_off)
             case 'right':
-                self.update_cent(x=bounce_off - self.radius)
+                self.update_nw(x=bounce_off - (self.radius*2))
             case 'top':
-                self.update_cent(y=bounce_off + self.radius)
+                self.update_nw(y=bounce_off)
             case 'bottom':
-                self.update_cent(y=bounce_off - self.radius)
+                self.update_nw(y=bounce_off - (self.radius*2))
             case _:
                 raise ValueError("Invalid point hit")
-
-    def process(self):
-        if not self.has_been_shot:
-            self.update_cent(x=self.__get_coords_while_stuck()[0])
-
-        self.move_by_vel()
-
-        print(tuple(map(round, self.cent_pos)))
 
     def __get_coords_while_stuck(self) -> list[int]:
         return [Player.active_paddle.centre[0], Player.active_paddle.nw_pos[1] - self.radius]
@@ -122,17 +122,17 @@ class Instance:
 
     def __check_for_hit(self) -> None:
         # hits the left wall
-        if (self.left + self.vel[0]) < 0:
+        if (self.left + self.vel[0]) < 0 and self.vel[0] < 0:
             self.bounce('x', 0, 'left')
             self.can_hit_paddle = True
 
         # hits the right wall
-        if (self.right + self.vel[0]) > c.SCREEN_SIZE[0]:
+        if (self.right + self.vel[0]) > c.SCREEN_SIZE[0] and self.vel[0] > 0:
             self.bounce('x', c.SCREEN_SIZE[0], 'right')
             self.can_hit_paddle = True
 
         # hits the roof
-        if self.top + self.vel[1] < 0:
+        if self.top + self.vel[1] < 0 and self.vel[1] < 0:
             self.bounce('y', 0, 'top')
             self.can_hit_paddle = True
 
@@ -189,7 +189,6 @@ class Instance:
 
             print("ball vel:\t", tuple(map(round, self.vel)))
             print("-"*31)
-            print()
 
             brick_hit.gets_hit()
             self.can_hit_paddle = True
