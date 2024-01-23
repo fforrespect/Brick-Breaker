@@ -24,34 +24,31 @@ class Instance:
 
     @property
     def rect(self) -> pygame.Rect:
-        return pygame.Rect(self.nw_pos, (self.radius*2, self.radius*2))
-
-    @property
-    def nw_pos(self) -> tuple[float, float]:
-        return (
+        nw_pos: tuple[float, float] = (
             self.cent_pos[0] - self.radius,
             self.cent_pos[1] - self.radius
         )
-
-    @nw_pos.setter
-    def nw_pos(self, value: tuple[float, float]) -> None:
-        self.cent_pos = [value[0] + self.radius, value[1] + self.radius]
-
-    @property
-    def top(self) -> float:
-        return self.rect.top
-
-    @property
-    def bottom(self) -> float:
-        return self.rect.bottom
+        return pygame.Rect(nw_pos, (self.radius*2, self.radius*2))
 
     @property
     def left(self) -> float:
-        return self.rect.left
+        ########
+        return self.cent_pos[0] - self.radius
 
     @property
     def right(self) -> float:
-        return self.rect.right
+        ########
+        return self.cent_pos[0] + self.radius
+
+    @property
+    def top(self) -> float:
+        ########
+        return self.cent_pos[1] - self.radius
+
+    @property
+    def bottom(self) -> float:
+        ########
+        return self.cent_pos[1] + self.radius
 
     def draw(self, screen: pygame.Surface) -> None:
         pygame.draw.circle(screen, self.colour, self.cent_pos, self.radius)
@@ -60,26 +57,28 @@ class Instance:
         if not self.has_been_shot:
             self.update_cent(x=self.__get_coords_while_stuck()[0])
 
-        self.move_by_vel()
-
+        print("before hit:")
         print("ball cent:\t", tuple(map(round, self.cent_pos)))
-        print("ball nw:\t", tuple(map(round, self.nw_pos)))
+        print("ball nw:\t", tuple(map(round, [self.cent_pos[0] - self.radius, self.cent_pos[1] - self.radius])))
+        print("ball vel:\t", tuple(map(round, self.vel)))
+
+        self.move(*self.vel)
+
+        print("after hit:")
+        print("ball cent:\t", tuple(map(round, self.cent_pos)))
+        print("ball nw:\t", tuple(map(round, [self.cent_pos[0] - self.radius, self.cent_pos[1] - self.radius])))
+        print("ball vel:\t", tuple(map(round, self.vel)))
+        print("\n")
+        ########
 
     def update_cent(self, x: float = None, y: float = None) -> None:
         self.cent_pos = [x if x is not None else self.cent_pos[0],
                          y if y is not None else self.cent_pos[1]]
 
-    def update_nw(self, x: float = None, y: float = None) -> None:
-        self.nw_pos = [x if x is not None else self.nw_pos[0],
-                       y if y is not None else self.nw_pos[1]]
-
     def move(self, x: float = 0, y: float = 0) -> None:
         self.__check_for_hit()
         self.cent_pos[0] += x
         self.cent_pos[1] += y
-
-    def move_by_vel(self) -> None:
-        self.move(*self.vel)
 
     def set_vel(self, x: float = None, y: float = None):
         self.vel = [x*self.speed if x is not None else self.vel[0],
@@ -89,6 +88,7 @@ class Instance:
                surface: Literal['paddle', 'x', 'y'],
                bounce_off: float | None,
                point_hit: Literal['top', 'bottom', 'left', 'right'] | None) -> None:
+        print("bounce")
         match surface:
             case 'x':
                 self.vel[0] *= -1
@@ -101,15 +101,16 @@ class Instance:
             case _:
                 raise ValueError("Invalid surface")
 
+        # which part of the ball hit an object
         match point_hit:
             case 'left':
-                self.update_nw(x=bounce_off)
+                self.update_cent(x=bounce_off + self.radius)
             case 'right':
-                self.update_nw(x=bounce_off - (self.radius*2))
+                self.update_cent(x=bounce_off - self.radius)
             case 'top':
-                self.update_nw(y=bounce_off)
+                self.update_cent(y=bounce_off + self.radius)
             case 'bottom':
-                self.update_nw(y=bounce_off - (self.radius*2))
+                self.update_cent(y=bounce_off - self.radius)
             case _:
                 raise ValueError("Invalid point hit")
 
@@ -147,7 +148,6 @@ class Instance:
         brick_hit_index: int = self.rect.collidelist(Brick.grid.all_brick_rects)
         if brick_hit_index != -1:
 
-            print()
             print("-"*10, "hit brick", "-"*10)
 
             brick_hit: Brick.Instance = Brick.all_bricks[brick_hit_index]
@@ -157,6 +157,7 @@ class Instance:
             # if  (the ball is to the left of the brick,
             #        but is soon going to be inside the brick) and it's moving right
             if ((self.right + self.vel[0]) < brick_hit.left) and self.vel[0] > 0:
+                print("ball left:\t", round(self.left))
                 self.bounce('x', brick_hit.left, 'right')
                 print("hit the brick on the: left")
                 print("ball left:\t", self.left)
@@ -165,6 +166,7 @@ class Instance:
             # if  (the ball is to the right of the brick,
             #        but is soon going to be inside the brick) and it's moving left
             elif ((self.left + self.vel[0]) > brick_hit.right) and self.vel[0] < 0:
+                print("ball right:\t", round(self.right))
                 self.bounce('x', brick_hit.right, 'left')
                 print("hit the brick on the: right")
                 print("ball right:\t", self.right)
@@ -173,6 +175,7 @@ class Instance:
             # if  (the ball is above the brick,
             #        but is soon going to be inside the brick) and it's moving downwards
             elif ((self.bottom + self.vel[1]) > brick_hit.top) and self.vel[1] > 0:
+                print("ball bottom:\t", round(self.bottom))
                 self.bounce('y', brick_hit.top, 'bottom')
                 print("hit the brick on the: top")
                 print("ball bottom:\t", self.bottom)
@@ -181,6 +184,7 @@ class Instance:
             # if  (the ball is below the brick,
             #        but is soon going to be inside the brick) and it's moving upwards
             elif ((self.top + self.vel[1]) < brick_hit.bottom) and self.vel[1] < 0:
+                print("ball top:\t", round(self.top))
                 self.bounce('y', brick_hit.bottom, 'top')
                 print("hit the brick on the: bottom")
                 print("ball top:\t", self.top)
@@ -188,7 +192,6 @@ class Instance:
             else:
                 print("wtf just happened?!")
 
-            print("ball vel:\t", tuple(map(round, self.vel)))
             print("-"*31)
 
             brick_hit.gets_hit()
