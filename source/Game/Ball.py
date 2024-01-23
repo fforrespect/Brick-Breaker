@@ -8,7 +8,7 @@ from Setup import Constants as c, GlobalVars as gv, Colours
 
 class Instance:
     def __init__(self, pos: list[int] | None = None, vel: list[int] | None = None, is_first: bool = False):
-        self.radius: int = c.DEFAULT_BALL_RAD
+        self.radius: int = c.DEFAULT_BALL_RADIUS
 
         self.cent_pos: list[int] = pos if pos is not None else self.__get_coords_while_stuck()
         self.vel: list[int] = vel if vel is not None else [0, 0]
@@ -24,7 +24,7 @@ class Instance:
 
     @property
     def rect(self) -> pygame.Rect:
-        return pygame.Rect(self.nw_pos, [self.radius * 2] * 2)
+        return pygame.Rect(self.nw_pos, (self.radius*2, self.radius*2))
 
     @property
     def nw_pos(self) -> tuple[float, float]:
@@ -63,6 +63,7 @@ class Instance:
         self.move_by_vel()
 
         print("ball cent:\t", tuple(map(round, self.cent_pos)))
+        print("ball nw:\t", tuple(map(round, self.nw_pos)))
 
     def update_cent(self, x: float = None, y: float = None) -> None:
         self.cent_pos = [x if x is not None else self.cent_pos[0],

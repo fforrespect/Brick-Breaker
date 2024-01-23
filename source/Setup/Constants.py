@@ -13,7 +13,7 @@ INITIAL_PADDLE_POSITION: tuple[int, int] = (
 PADDLE_BORDER_RAD: int = 10
 
 # Ball #
-DEFAULT_BALL_RAD: int = 10
+DEFAULT_BALL_RADIUS: int = 10
 BALL_SPEED: int = 10
 
 # Bricks #
