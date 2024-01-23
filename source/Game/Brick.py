@@ -21,25 +21,32 @@ class Instance:
 
     @property
     def rect(self) -> pygame.Rect:
-        nw_px: tuple[float, float] = ((self.grid_pos[0]*c.BRICK_SIZE[0]) + c.BRICK_SPACER,
-                                      (self.grid_pos[1]*c.BRICK_SIZE[1]) + c.BRICK_SPACER)
-        return pygame.Rect(nw_px, self.px_size)
+        return pygame.Rect(self.nw_px_pos, self.px_size)
 
     @property
-    def top(self) -> float:
-        return self.rect.top
+    def nw_px_pos(self) -> tuple[float, float]:
+        return ((self.grid_pos[0]*c.BRICK_SIZE[0]) + c.BRICK_SPACER,
+                (self.grid_pos[1]*c.BRICK_SIZE[1]) + c.BRICK_SPACER)
 
-    @property
-    def bottom(self) -> float:
-        return self.rect.bottom
+    # Directional Properties #
 
     @property
     def left(self) -> float:
-        return self.rect.left
+        return self.nw_px_pos[0]
 
     @property
     def right(self) -> float:
-        return self.rect.right
+        return self.nw_px_pos[0] + c.BRICK_SIZE[0]
+
+    @property
+    def top(self) -> float:
+        return self.nw_px_pos[1]
+
+    @property
+    def bottom(self) -> float:
+        return self.nw_px_pos[1] + c.BRICK_SIZE[1]
+
+    # End Directional Properties #
 
     @property
     def is_destroyed(self) -> bool:
