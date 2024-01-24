@@ -17,6 +17,7 @@ class Instance:
         self.colour: tuple[int, int, int] = Colours.RED
         self.speed: int = c.BALL_SPEED
         self.can_hit_paddle: bool = False
+        self.should_move: bool = True
 
         gv.all_objects.append(self)
         global all_balls
@@ -32,22 +33,18 @@ class Instance:
 
     @property
     def left(self) -> float:
-        ########
         return self.cent_pos[0] - self.radius
 
     @property
     def right(self) -> float:
-        ########
         return self.cent_pos[0] + self.radius
 
     @property
     def top(self) -> float:
-        ########
         return self.cent_pos[1] - self.radius
 
     @property
     def bottom(self) -> float:
-        ########
         return self.cent_pos[1] + self.radius
 
     def draw(self, screen: pygame.Surface) -> None:
@@ -69,7 +66,6 @@ class Instance:
         print("ball nw:\t", tuple(map(round, [self.cent_pos[0] - self.radius, self.cent_pos[1] - self.radius])))
         print("ball vel:\t", tuple(map(round, self.vel)))
         print("\n")
-        ########
 
     def update_cent(self, x: float = None, y: float = None) -> None:
         self.cent_pos = [x if x is not None else self.cent_pos[0],
@@ -77,8 +73,9 @@ class Instance:
 
     def move(self, x: float = 0, y: float = 0) -> None:
         self.__check_for_hit()
-        self.cent_pos[0] += x
-        self.cent_pos[1] += y
+        if self.should_move:
+            self.cent_pos[0] += x
+            self.cent_pos[1] += y
 
     def set_vel(self, x: float = None, y: float = None):
         self.vel = [x*self.speed if x is not None else self.vel[0],
@@ -88,7 +85,7 @@ class Instance:
                surface: Literal['paddle', 'x', 'y'],
                bounce_off: float | None,
                point_hit: Literal['top', 'bottom', 'left', 'right'] | None) -> None:
-        print("bounce")
+        self.should_move = False
         match surface:
             case 'x':
                 self.vel[0] *= -1
@@ -123,6 +120,8 @@ class Instance:
         return (self.cent_pos[0] - Player.active_paddle.centre[0])/Player.active_paddle.size[0]
 
     def __check_for_hit(self) -> None:
+        self.should_move = True
+
         # hits the left wall
         if (self.left + self.vel[0]) < 0 and self.vel[0] < 0:
             self.bounce('x', 0, 'left')
