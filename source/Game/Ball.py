@@ -54,28 +54,33 @@ class Instance:
         if not self.has_been_shot:
             self.update_cent(x=self.__get_coords_while_stuck()[0])
 
-        print("before hit:")
-        print("ball cent:\t", tuple(map(round, self.cent_pos)))
-        print("ball nw:\t", tuple(map(round, [self.cent_pos[0] - self.radius, self.cent_pos[1] - self.radius])))
-        print("ball vel:\t", tuple(map(round, self.vel)))
+        if not self.should_move:
+            print("before hit:")
+            print("ball cent:\t", tuple(map(round, self.cent_pos)))
+            print("ball nw:\t", tuple(map(round, [self.cent_pos[0] - self.radius, self.cent_pos[1] - self.radius])))
+            print("ball vel:\t", tuple(map(round, self.vel)))
 
-        self.move(*self.vel)
+        self.move_by_vel()
 
-        print("after hit:")
-        print("ball cent:\t", tuple(map(round, self.cent_pos)))
-        print("ball nw:\t", tuple(map(round, [self.cent_pos[0] - self.radius, self.cent_pos[1] - self.radius])))
-        print("ball vel:\t", tuple(map(round, self.vel)))
-        print("\n")
+        if not self.should_move:
+            print("after hit:")
+            print("ball cent:\t", tuple(map(round, self.cent_pos)))
+            print("ball nw:\t", tuple(map(round, [self.cent_pos[0] - self.radius, self.cent_pos[1] - self.radius])))
+            print("ball vel:\t", tuple(map(round, self.vel)))
+            print("\n")
 
     def update_cent(self, x: float = None, y: float = None) -> None:
         self.cent_pos = [x if x is not None else self.cent_pos[0],
                          y if y is not None else self.cent_pos[1]]
 
     def move(self, x: float = 0, y: float = 0) -> None:
-        self.__check_for_hit()
         if self.should_move:
             self.cent_pos[0] += x
             self.cent_pos[1] += y
+
+    def move_by_vel(self) -> None:
+        self.__check_for_hit()
+        self.move(*self.vel)
 
     def set_vel(self, x: float = None, y: float = None):
         self.vel = [x*self.speed if x is not None else self.vel[0],
@@ -120,6 +125,8 @@ class Instance:
         return (self.cent_pos[0] - Player.active_paddle.centre[0])/Player.active_paddle.size[0]
 
     def __check_for_hit(self) -> None:
+        # By default, it should move
+        # But, if it hits something, don't move for one frame
         self.should_move = True
 
         # hits the left wall
@@ -128,7 +135,7 @@ class Instance:
             self.can_hit_paddle = True
 
         # hits the right wall
-        if (self.right + self.vel[0]) > c.SCREEN_SIZE[0] and self.vel[0] > 0:
+        elif (self.right + self.vel[0]) > c.SCREEN_SIZE[0] and self.vel[0] > 0:
             self.bounce('x', c.SCREEN_SIZE[0], 'right')
             self.can_hit_paddle = True
 
@@ -138,7 +145,7 @@ class Instance:
             self.can_hit_paddle = True
 
         # hits the paddle
-        if self.rect.move(self.vel).colliderect(Player.active_paddle.rect):
+        elif self.rect.move(self.vel).colliderect(Player.active_paddle.rect):
             if self.can_hit_paddle:
                 self.bounce('paddle', Player.active_paddle.rect.top, 'bottom')
             self.can_hit_paddle = False
