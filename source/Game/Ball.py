@@ -157,47 +157,47 @@ class Instance:
         if brick_hit_index != -1:
             brick_hit: Brick.Instance = Brick.all_bricks[brick_hit_index]
 
-            print("-"*10, "hit brick", "-"*10)
-
-            print("ball nw:\t", (round(self.left), round(self.top)))
-            print("ball se:\t", (round(self.right), round(self.bottom)))
-            print("-----")
-            print("brick nw:\t", (round(brick_hit.left), round(brick_hit.top)))
-            print("brick se:\t", (round(brick_hit.right), round(brick_hit.bottom)))
-
-            # if it hits the brick on the...
-            # ...left
-            # if  (the ball is to the left of the brick,
-            #        but is soon going to be inside the brick) and it's moving right
-            if ((self.right + self.vel[0]) > brick_hit.left) and self.vel[0] > 0:
-                self.bounce('x', brick_hit.left, 'right')
-                print("hit the brick on the: left")
-            # ...right
-            # if  (the ball is to the right of the brick,
-            #        but is soon going to be inside the brick) and it's moving left
-            elif ((self.left + self.vel[0]) < brick_hit.right) and self.vel[0] < 0:
-                self.bounce('x', brick_hit.right, 'left')
-                print("hit the brick on the: right")
-            # ...top
-            # if  (the ball is above the brick,
-            #        but is soon going to be inside the brick) and it's moving downwards
-            elif ((self.bottom + self.vel[1]) > brick_hit.top) and self.vel[1] > 0:
-                self.bounce('y', brick_hit.top, 'bottom')
-                print("hit the brick on the: top")
-            # ...bottom
-            # if  (the ball is below the brick,
-            #        but is soon going to be inside the brick) and it's moving upwards
-            elif ((self.top + self.vel[1]) < brick_hit.bottom) and self.vel[1] < 0:
-                self.bounce('y', brick_hit.bottom, 'top')
-                print("hit the brick on the: bottom")
-            else:
-                print("wtf just happened?!")
-
-            print("-----")
-            print("ball nw:\t", (round(self.left), round(self.top)))
-            print("ball se:\t", (round(self.right), round(self.bottom)))
-
-            print("-"*31)
+            # print("-"*10, "hit brick", "-"*10)
+            #
+            # print("ball nw:\t", (round(self.left), round(self.top)))
+            # print("ball se:\t", (round(self.right), round(self.bottom)))
+            # print("-----")
+            # print("brick nw:\t", (round(brick_hit.left), round(brick_hit.top)))
+            # print("brick se:\t", (round(brick_hit.right), round(brick_hit.bottom)))
+            #
+            # # if it hits the brick on the...
+            # # ...left
+            # # if  (the ball is to the left of the brick,
+            # #        but is soon going to be inside the brick) and it's moving right
+            # if ((self.right + self.vel[0]) > brick_hit.left) and self.vel[0] > 0:
+            #     self.bounce('x', brick_hit.left, 'right')
+            #     print("hit the brick on the: left")
+            # # ...right
+            # # if  (the ball is to the right of the brick,
+            # #        but is soon going to be inside the brick) and it's moving left
+            # elif ((self.left + self.vel[0]) < brick_hit.right) and self.vel[0] < 0:
+            #     self.bounce('x', brick_hit.right, 'left')
+            #     print("hit the brick on the: right")
+            # # ...top
+            # # if  (the ball is above the brick,
+            # #        but is soon going to be inside the brick) and it's moving downwards
+            # elif ((self.bottom + self.vel[1]) > brick_hit.top) and self.vel[1] > 0:
+            #     self.bounce('y', brick_hit.top, 'bottom')
+            #     print("hit the brick on the: top")
+            # # ...bottom
+            # # if  (the ball is below the brick,
+            # #        but is soon going to be inside the brick) and it's moving upwards
+            # elif ((self.top + self.vel[1]) < brick_hit.bottom) and self.vel[1] < 0:
+            #     self.bounce('y', brick_hit.bottom, 'top')
+            #     print("hit the brick on the: bottom")
+            # else:
+            #     print("wtf just happened?!")
+            #
+            # print("-----")
+            # print("ball nw:\t", (round(self.left), round(self.top)))
+            # print("ball se:\t", (round(self.right), round(self.bottom)))
+            #
+            # print("-"*31)
 
             brick_hit.gets_hit()
             self.can_hit_paddle = True
