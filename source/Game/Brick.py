@@ -13,8 +13,9 @@ class Instance:
         self.px_size: tuple[float, float] = (c.BRICK_SIZE[0] - (c.BRICK_SPACER*2),
                                              c.BRICK_SIZE[1] - (c.BRICK_SPACER*2))
 
+        dir_: Literal['left', 'right', 'top', 'bottom']
         self.collision_triangles: list[Triangle.Instance] = [
-            Triangle.create_collision_triangle(self, Literal['left', 'right', 'top', 'bottom'](dir_))
+            Triangle.create_collision_triangle(self, dir_)
             for dir_ in ['left', 'right', 'top', 'bottom']
         ]
 
