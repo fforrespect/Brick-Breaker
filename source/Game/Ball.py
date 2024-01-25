@@ -17,7 +17,6 @@ class Instance:
         self.colour: tuple[int, int, int] = Colours.RED
         self.speed: int = c.BALL_SPEED
         self.can_hit_paddle: bool = False
-        self.should_move: bool = True
 
         gv.all_objects.append(self)
         global all_balls
@@ -54,18 +53,7 @@ class Instance:
         if not self.has_been_shot:
             self.update_cent(x=self.__get_coords_while_stuck()[0])
 
-        print("before hit:")
-        print("ball cent:\t", tuple(map(round, self.cent_pos)))
-        print("ball nw:\t", tuple(map(round, [self.cent_pos[0] - self.radius, self.cent_pos[1] - self.radius])))
-        print("ball vel:\t", tuple(map(round, self.vel)))
-
         self.move_by_vel()
-
-        print("after hit:")
-        print("ball cent:\t", tuple(map(round, self.cent_pos)))
-        print("ball nw:\t", tuple(map(round, [self.cent_pos[0] - self.radius, self.cent_pos[1] - self.radius])))
-        print("ball vel:\t", tuple(map(round, self.vel)))
-        print("\n")
 
     def update_cent(self, x: float = None, y: float = None) -> None:
         self.cent_pos = [x if x is not None else self.cent_pos[0],
@@ -88,7 +76,6 @@ class Instance:
                surface: Literal['paddle', 'x', 'y'],
                bounce_off: float | None,
                point_hit: Literal['top', 'bottom', 'left', 'right'] | None) -> None:
-        self.should_move = False
         match surface:
             case 'x':
                 self.vel[0] *= -1
@@ -130,26 +117,22 @@ class Instance:
         # hits the left wall
         if (self.left + self.vel[0]) < 0 and self.vel[0] < 0:
             self.bounce('x', 0, 'left')
-            print("hit: left wall")
             self.can_hit_paddle = True
 
         # hits the right wall
         elif (self.right + self.vel[0]) > c.SCREEN_SIZE[0] and self.vel[0] > 0:
             self.bounce('x', c.SCREEN_SIZE[0], 'right')
-            print("hit: right wall")
             self.can_hit_paddle = True
 
         # hits the roof
         if self.top + self.vel[1] < 0 and self.vel[1] < 0:
             self.bounce('y', 0, 'top')
-            print("hit: roof")
             self.can_hit_paddle = True
 
         # hits the paddle
         elif self.rect.move(self.vel).colliderect(Player.active_paddle.rect):
             if self.can_hit_paddle:
                 self.bounce('paddle', Player.active_paddle.rect.top, 'bottom')
-                print("hit: paddle")
             self.can_hit_paddle = False
 
         # hits a brick
@@ -157,47 +140,29 @@ class Instance:
         if brick_hit_index != -1:
             brick_hit: Brick.Instance = Brick.all_bricks[brick_hit_index]
 
-            # print("-"*10, "hit brick", "-"*10)
-            #
-            # print("ball nw:\t", (round(self.left), round(self.top)))
-            # print("ball se:\t", (round(self.right), round(self.bottom)))
-            # print("-----")
-            # print("brick nw:\t", (round(brick_hit.left), round(brick_hit.top)))
-            # print("brick se:\t", (round(brick_hit.right), round(brick_hit.bottom)))
-            #
-            # # if it hits the brick on the...
-            # # ...left
-            # # if  (the ball is to the left of the brick,
-            # #        but is soon going to be inside the brick) and it's moving right
-            # if ((self.right + self.vel[0]) > brick_hit.left) and self.vel[0] > 0:
-            #     self.bounce('x', brick_hit.left, 'right')
-            #     print("hit the brick on the: left")
-            # # ...right
-            # # if  (the ball is to the right of the brick,
-            # #        but is soon going to be inside the brick) and it's moving left
-            # elif ((self.left + self.vel[0]) < brick_hit.right) and self.vel[0] < 0:
-            #     self.bounce('x', brick_hit.right, 'left')
-            #     print("hit the brick on the: right")
-            # # ...top
-            # # if  (the ball is above the brick,
-            # #        but is soon going to be inside the brick) and it's moving downwards
-            # elif ((self.bottom + self.vel[1]) > brick_hit.top) and self.vel[1] > 0:
-            #     self.bounce('y', brick_hit.top, 'bottom')
-            #     print("hit the brick on the: top")
-            # # ...bottom
-            # # if  (the ball is below the brick,
-            # #        but is soon going to be inside the brick) and it's moving upwards
-            # elif ((self.top + self.vel[1]) < brick_hit.bottom) and self.vel[1] < 0:
-            #     self.bounce('y', brick_hit.bottom, 'top')
-            #     print("hit the brick on the: bottom")
-            # else:
-            #     print("wtf just happened?!")
-            #
-            # print("-----")
-            # print("ball nw:\t", (round(self.left), round(self.top)))
-            # print("ball se:\t", (round(self.right), round(self.bottom)))
-            #
-            # print("-"*31)
+            i: int = 0
+            for i, triangle in enumerate(brick_hit.collision_triangles):
+                if triangle.point_inside(tuple[float, float](self.cent_pos)):
+                    break
+
+            bounce_parameters: dict[
+                int, tuple[
+                    Literal['x', 'y'],
+                    Literal['left', 'right', 'top', 'bottom'],
+                    Literal['left', 'right', 'top', 'bottom']
+                ]
+            ] = {
+                0: ('x', 'left', 'right'),  # left
+                1: ('x', 'right', 'left'),  # right
+                2: ('y', 'top', 'bottom'),  # top
+                3: ('y', 'bottom', 'top'),  # bottom
+            }
+
+            # Retrieve parameters based on side_hit
+            axis, side_attr, opposite_side = bounce_parameters[i]
+
+            # Call the bounce method with the parameters
+            self.bounce(axis, getattr(brick_hit, side_attr), opposite_side)
 
             brick_hit.gets_hit()
             self.can_hit_paddle = True
