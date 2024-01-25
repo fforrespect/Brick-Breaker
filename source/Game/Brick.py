@@ -1,6 +1,7 @@
 import pygame
+from typing import Literal
 
-from Process import Level
+from Process import Level, Triangle
 from Setup import Constants as c, GlobalVars as gv, Colours
 
 
@@ -11,6 +12,11 @@ class Instance:
 
         self.px_size: tuple[float, float] = (c.BRICK_SIZE[0] - (c.BRICK_SPACER*2),
                                              c.BRICK_SIZE[1] - (c.BRICK_SPACER*2))
+
+        self.collision_triangles: list[Triangle.Instance] = [
+            Triangle.create_collision_triangle(self, Literal['left', 'right', 'top', 'bottom'](dir_))
+            for dir_ in ['left', 'right', 'top', 'bottom']
+        ]
 
         global all_bricks
         all_bricks.append(self)
@@ -29,7 +35,6 @@ class Instance:
                 (self.grid_pos[1]*c.BRICK_SIZE[1]) + c.BRICK_SPACER)
 
     # Directional Properties #
-
     @property
     def left(self) -> float:
         return self.nw_px_pos[0]
@@ -45,7 +50,6 @@ class Instance:
     @property
     def bottom(self) -> float:
         return self.nw_px_pos[1] + c.BRICK_SIZE[1]
-
     # End Directional Properties #
 
     @property
@@ -110,4 +114,4 @@ grid: Grid | None = None
 def init_grid():
     Grid()
     global grid
-    grid.set_level(0)
+    grid.set_level(1)

@@ -29,19 +29,61 @@ class Instance:
 
 
 def create_collision_triangle(
-        left_point: tuple[float, float],
-        right_point: tuple[float, float],
-        direction: Literal['top', 'bottom', 'left', 'right']) -> Instance:
+        brick,
+        direction: Literal['left', 'right', 'top', 'bottom']) -> Instance:
 
-    x_l, y_lr = left_point
-    x_r = right_point[0]
+    ball_size: int = c.DEFAULT_BALL_RADIUS*2
 
-    height = c.DEFAULT_BALL_RADIUS*2
+    p1: tuple[float, float]
+    p2: tuple[float, float]
+    p3: tuple[float, float]
 
-    p1 = (x_l - height, y_lr - height)
-    p2 = (x_r + height, y_lr - height)
+    match direction:
+        case 'left':
+            y_t: float = brick.top
+            y_b: float = brick.bottom
+            x_tb: float = brick.left
 
-    midpoint = (x_r + x_l)/2
-    p3 = (midpoint, y_lr - midpoint)
+            p1 = (x_tb - ball_size, y_t - ball_size)
+            p2 = (x_tb - ball_size, y_b + ball_size)
+
+            dist = abs(y_t - y_b)/2
+            p3 = (x_tb + dist, y_t + dist)
+
+        case 'right':
+            y_t: float = brick.top
+            y_b: float = brick.bottom
+            x_tb: float = brick.right
+
+            p1 = (x_tb + ball_size, y_t - ball_size)
+            p2 = (x_tb + ball_size, y_b + ball_size)
+
+            dist = abs(y_t - y_b)/2
+            p3 = (x_tb - dist, y_b - dist)
+
+        case 'top':
+            x_l: float = brick.left
+            x_r: float = brick.right
+            y_lr: float = brick.top
+
+            p1 = (x_l - ball_size, y_lr - ball_size)
+            p2 = (x_r + ball_size, y_lr - ball_size)
+
+            dist = abs(x_r - x_l)/2
+            p3 = (x_l + dist, y_lr + dist)
+
+        case 'bottom':
+            x_l: float = brick.left
+            x_r: float = brick.right
+            y_lr: float = brick.bottom
+
+            p1 = (x_l - ball_size, y_lr + ball_size)
+            p2 = (x_r + ball_size, y_lr + ball_size)
+
+            dist = (x_r - x_l)/2
+            p3 = (x_l + dist, y_lr - dist)
+
+        case _:
+            p1, p2, p3 = (-1.0, -1.0), (-1.0, -1.0), (-1.0, -1.0)
 
     return Instance((p1, p2, p3))
