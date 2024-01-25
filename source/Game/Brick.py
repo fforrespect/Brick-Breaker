@@ -115,4 +115,4 @@ grid: Grid | None = None
 def init_grid():
     Grid()
     global grid
-    grid.set_level(1)
+    grid.set_level(0)
