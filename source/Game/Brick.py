@@ -1,7 +1,7 @@
 import pygame
 from typing import Literal
 
-from Game import Ball
+from Game import Ball, Player
 from Process import Level, Triangle
 from Setup import Constants as c, GlobalVars as gv, Colours
 
@@ -112,6 +112,7 @@ class Grid:
             gv.current_level += 1
             self.set_level(gv.current_level)
             Ball.reset_all_balls()
+            Player.active_paddle.reset_pos()
 
 
 grid: Grid | None = None

@@ -62,6 +62,9 @@ class Paddle:
             if pygame.mouse.get_pressed(num_buttons=3)[0]:
                 self.shoot()
 
+    def reset_pos(self) -> None:
+        self.nw_pos = list(c.INITIAL_PADDLE_POSITION)
+
     def __check_hit_wall(self, new_x: int) -> int:
         if new_x < 0:
             return 0
