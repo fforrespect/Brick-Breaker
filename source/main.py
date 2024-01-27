@@ -13,7 +13,7 @@ pygame.display.set_caption("Brick Breaker")
 
 Player.init()
 Brick.init_grid()
-Lives.init()
+Lives.Lives()
 
 while True:
     clock.tick(c.FPS)
