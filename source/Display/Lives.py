@@ -5,7 +5,7 @@ from Setup import GlobalVars as gv, Constants as c
 
 class Life:
     def __init__(self, number):
-        self.number = number
+        self.number: int = number
 
         self.x: float = c.LIVES_START_X - (number * c.LIVES_SPACING)
         self.y: float = c.LIVES_PADDING

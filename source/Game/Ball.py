@@ -171,7 +171,7 @@ class Instance:
             brick_hit.gets_hit()
             self.can_hit_paddle = True
 
-    def __check_off_screen(self):
+    def __check_off_screen(self) -> None:
         if len(all_balls) <= 1 and self.cent_pos[1] > c.SCREEN_SIZE[1]:
             gv.player_lives -= 1
             reset_all_balls()
