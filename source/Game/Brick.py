@@ -20,7 +20,7 @@ class Instance:
         dir_: Literal['left', 'right', 'top', 'bottom']
         self.collision_triangles: list[Triangle.Instance] = [
             Triangle.create_collision_triangle(self, dir_)
-            for dir_ in ['left', 'right', 'top', 'bottom']
+            for dir_ in ('left', 'right', 'top', 'bottom')
         ]
 
         global all_bricks
