@@ -21,7 +21,12 @@ class Lives:
     def __init__(self):
         self.life_objects: list[Life] = []
 
+        for life_number in range(c.MAX_LIVES):
+            self.life_objects.append(Life(life_number))
+
         gv.all_objects.append(self)
+        global lives_object
+        lives_object = self
 
     def draw(self, screen: pygame.Surface):
         for life in self.life_objects:
@@ -30,14 +35,6 @@ class Lives:
 
 
 lives_object: Lives | None = None
-
-
-def init() -> None:
-    global lives_object
-    lives_object = Lives()
-
-    for i in range(c.MAX_LIVES):
-        lives_object.life_objects.append(Life(i))
 
 
 def check_exceeded_max_lives():
