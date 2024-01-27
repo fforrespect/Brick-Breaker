@@ -11,7 +11,7 @@ class Life:
         self.y: float = c.LIVES_PADDING
 
         self.image: pygame.image = pygame.image.load(f"{c.IMAGES_FP}life.png")
-        self.image = pygame.transform.scale(self.image, (50, 50))
+        self.image = pygame.transform.scale(self.image, (c.LIVES_SIZE, c.LIVES_SIZE))
 
     def draw(self, screen: pygame.Surface) -> None:
         screen.blit(self.image, (self.x, self.y))
