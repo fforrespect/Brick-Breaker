@@ -3,23 +3,38 @@ import pygame
 from Setup import GlobalVars as gv, Constants as c
 
 
-def display():
-    # How many lives the player has
-    lives = gv.player_lives
-
-    for i in range(lives):
-        Life(i)
-
-
 class Life:
     def __init__(self, number):
-        self.x = c.LIVES_START_X - (number * c.LIVES_SPACING)
-        self.y = c.LIVES_PADDING
+        self.number = number
 
-        self.image = pygame.image.load(f"{c.IMAGES_FP}life.png")
+        self.x: float = c.LIVES_START_X - (number * c.LIVES_SPACING)
+        self.y: float = c.LIVES_PADDING
+
+        self.image: pygame.image = pygame.image.load(f"{c.IMAGES_FP}life.png")
         self.image = pygame.transform.scale(self.image, (50, 50))
+
+    def draw(self, screen: pygame.Surface) -> None:
+        screen.blit(self.image, (self.x, self.y))
+
+
+class Lives:
+    def __init__(self):
+        self.life_objects: list[Life] = []
 
         gv.all_objects.append(self)
 
-    def draw(self, screen):
-        screen.blit(self.image, (self.x, self.y))
+    def draw(self, screen: pygame.Surface):
+        for life in self.life_objects:
+            if life.number < gv.player_lives:
+                life.draw(screen)
+
+
+lives_object: Lives | None = None
+
+
+def init() -> None:
+    global lives_object
+    lives_object = Lives()
+
+    for i in range(c.MAX_LIVES):
+        lives_object.life_objects.append(Life(i))

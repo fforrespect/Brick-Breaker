@@ -13,6 +13,7 @@ pygame.display.set_caption("Brick Breaker")
 
 Player.init()
 Brick.init_grid()
+Lives.init()
 
 while True:
     clock.tick(c.FPS)
@@ -21,6 +22,5 @@ while True:
     Player.active_paddle.process()
     Ball.process_all()
     Brick.grid.check_for_new_level()
-    Lives.display()
 
     Window.display(screen)
