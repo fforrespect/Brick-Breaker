@@ -7,9 +7,10 @@ from Setup import Constants as c, GlobalVars as gv, Colours
 
 
 class Instance:
-    def __init__(self, strength, grid_pos: tuple[int, int]):
+    def __init__(self, strength: str, powerup: str, grid_pos: tuple[int, int]):
         self.strength: int = int(strength)
         self.grid_pos: tuple[int, int] = grid_pos
+        self.power_up: str = powerup if powerup != " " else None
 
         self.is_unbreakable: bool = self.strength == 0
 
@@ -103,12 +104,13 @@ class Grid:
 
     @staticmethod
     def set_level(level: int | str):
-        level_strings: tuple[str, ...] = Level.get(level)
+        level_strings: tuple[tuple[str, ...], ...] = Level.get(level)
 
+        row: int; col: int
         for row, row_string in enumerate(level_strings):
             for col, brick_val in enumerate(row_string):
-                if brick_val != " ":
-                    Instance(brick_val, (col, row))
+                if brick_val != "  ":
+                    Instance(brick_val[0], brick_val[1], (col, row))
 
     def check_for_new_level(self) -> None:
         if len(all_bricks) <= 0:
