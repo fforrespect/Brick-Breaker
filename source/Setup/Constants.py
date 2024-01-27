@@ -23,7 +23,15 @@ BRICK_SIZE: tuple[float, float] = (SCREEN_SIZE[0]//NUM_OF_BRICKS[0],
 BRICK_BORDER_RAD: int = 5
 BRICK_SPACER: int = 1
 
+# Lives #
+LIVES_SPACING = 65
+LIVES_PADDING = 25
+
+LIVES_SIZE = 50
+LIVES_START_X = SCREEN_SIZE[0] - (LIVES_PADDING*2 + LIVES_SIZE/2)
+
 # Files #
 _RESOURCES_FP: str = "../Resources/"
 
 LEVELS_FP: str = f"{_RESOURCES_FP}Levels/"
+IMAGES_FP = f"{_RESOURCES_FP}Images/"
