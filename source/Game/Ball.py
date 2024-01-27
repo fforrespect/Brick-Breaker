@@ -69,6 +69,7 @@ class Instance:
 
     def move_by_vel(self) -> None:
         self.__check_for_hit()
+        self.__check_off_screen()
         self.move(*self.vel)
 
     def set_vel(self, x: float = None, y: float = None):
@@ -169,6 +170,12 @@ class Instance:
 
             brick_hit.gets_hit()
             self.can_hit_paddle = True
+
+    def __check_off_screen(self):
+        if len(all_balls) <= 1 and self.cent_pos[1] > c.SCREEN_SIZE[1]:
+            gv.player_lives -= 1
+            reset_all_balls()
+            Player.active_paddle.reset_pos()
 
 
 all_balls: list[Instance] = []
