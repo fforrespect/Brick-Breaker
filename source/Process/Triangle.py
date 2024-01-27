@@ -84,6 +84,6 @@ def create_collision_triangle(
             p3 = (x_l + dist, y_lr - dist)
 
         case _:
-            p1, p2, p3 = (-1.0, -1.0), (-1.0, -1.0), (-1.0, -1.0)
+            raise ValueError("Invalid direction")
 
     return Instance((p1, p2, p3))
