@@ -1,6 +1,6 @@
 import pygame
 
-from Display import Window
+from Display import Window, Lives
 from Event import GameOver
 from Game import Player, Ball, Brick
 from Setup import Constants as c
@@ -21,5 +21,6 @@ while True:
     Player.active_paddle.process()
     Ball.process_all()
     Brick.grid.check_for_new_level()
+    Lives.display()
 
     Window.display(screen)
