@@ -38,3 +38,8 @@ def init() -> None:
 
     for i in range(c.MAX_LIVES):
         lives_object.life_objects.append(Life(i))
+
+
+def check_exceeded_max_lives():
+    if gv.player_lives > c.MAX_LIVES:
+        gv.player_lives = c.MAX_LIVES

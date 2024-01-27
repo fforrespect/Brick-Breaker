@@ -22,5 +22,6 @@ while True:
     Player.active_paddle.process()
     Ball.process_all()
     Brick.grid.check_for_new_level()
+    Lives.check_exceeded_max_lives()
 
     Window.display(screen)
