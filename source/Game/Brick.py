@@ -11,6 +11,8 @@ class Instance:
         self.strength: int = int(strength)
         self.grid_pos: tuple[int, int] = grid_pos
 
+        self.is_unbreakable: bool = self.strength == 0
+
         self.px_size: tuple[float, float] = (c.BRICK_SIZE[0] - (c.BRICK_SPACER*2),
                                              c.BRICK_SIZE[1] - (c.BRICK_SPACER*2))
 
@@ -63,8 +65,9 @@ class Instance:
         pygame.draw.rect(screen, Colours.BACKGROUND, self.rect, 2, c.BRICK_BORDER_RAD)
 
     def gets_hit(self):
-        self.strength -= 1
-        self.__check_for_destruction()
+        if not self.is_unbreakable:
+            self.strength -= 1
+            self.__check_for_destruction()
 
     def __check_for_destruction(self) -> bool:
         """

@@ -28,6 +28,7 @@ seven   : tuple[int, int, int] = (  0,   0,   0)
 eight   : tuple[int, int, int] = ( 86,  84,  87)
 
 STRENGTH: dict[int, tuple[int, int, int]] = {
+    0: WHITE,
     1: one,
     2: two,
     3: three,
