@@ -1,6 +1,7 @@
 import pygame
 from typing import Literal
 
+from Game import Ball
 from Process import Level, Triangle
 from Setup import Constants as c, GlobalVars as gv, Colours
 
@@ -80,8 +81,6 @@ all_bricks: list[Instance] = []
 
 class Grid:
     def __init__(self):
-        self.size: tuple[int, int] = c.NUM_OF_BRICKS
-
         gv.all_objects.append(self)
         global grid
         grid = self
@@ -107,6 +106,12 @@ class Grid:
             for col, brick_val in enumerate(row_string):
                 if brick_val != " ":
                     Instance(brick_val, (col, row))
+
+    def check_for_new_level(self) -> None:
+        if len(all_bricks) <= 0:
+            gv.current_level += 1
+            self.set_level(gv.current_level)
+            Ball.reset_all_balls()
 
 
 grid: Grid | None = None

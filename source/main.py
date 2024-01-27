@@ -20,5 +20,6 @@ while True:
 
     Player.active_paddle.process()
     Ball.process_all()
+    Brick.grid.check_for_new_level()
 
     Window.display(screen)

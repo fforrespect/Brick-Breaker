@@ -55,6 +55,9 @@ class Instance:
 
         self.move_by_vel()
 
+    def delete(self) -> None:
+        gv.all_objects.remove(self)
+
     def update_cent(self, x: float = None, y: float = None) -> None:
         self.cent_pos = [x if x is not None else self.cent_pos[0],
                          y if y is not None else self.cent_pos[1]]
@@ -175,7 +178,18 @@ def init_first_ball() -> Instance:
     return Instance(is_first=True)
 
 
+def reset_all_balls() -> None:
+    ball: Instance
+    global all_balls
+    for ball in all_balls:
+        ball.delete()
+
+    all_balls = []
+    Player.active_paddle.bound_ball = init_first_ball()
+
+
 def process_all() -> None:
     ball: Instance
+    global all_balls
     for ball in all_balls:
         ball.process()
