@@ -1,10 +1,10 @@
 
 from Setup import Constants as c
 
-_levels: dict[int, tuple[tuple[str, ...], ...]] = {}
+_levels: dict[int, tuple[tuple[tuple[str, str], ...], ...]] = {}
 
 
-def _decode(level: int) -> tuple[tuple[str, ...], ...]:
+def _decode(level: int) -> tuple[tuple[tuple[str, str], ...], ...]:
     with open(f"{c.LEVELS_FP}{level}.txt", 'r') as file:
         lines: list[str] = file.read().split("\n")
 
@@ -29,20 +29,18 @@ def _decode(level: int) -> tuple[tuple[str, ...], ...]:
         else:
             break
 
-    # split the line into
-    lines_list: list[tuple[str, ...]] = []
+    # split the line into a tuple of chars, of length 2
+    lines_list: list[tuple[tuple[str, str], ...]] = []
     for line_content in lines:
-        lines_list.append(tuple([line_content[i:i+2] for i in range(0, len(line_content), 2)]))
+        lines_list.append(tuple([(line_content[i], line_content[i+1]) for i in range(0, len(line_content), 2)]))
 
     # add the new level to the _levels dictionary
     _levels[level] = tuple(lines_list)
 
-    print(_levels[level])
-
     return tuple(lines_list)
 
 
-def get(level: int | str) -> tuple[tuple[str, ...], ...]:
+def get(level: int | str) -> tuple[tuple[tuple[str, str], ...], ...]:
     level = int(level)
     if level in _levels:
         return _levels[level]

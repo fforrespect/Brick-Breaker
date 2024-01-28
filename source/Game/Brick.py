@@ -104,12 +104,12 @@ class Grid:
 
     @staticmethod
     def set_level(level: int | str):
-        level_strings: tuple[tuple[str, ...], ...] = Level.get(level)
+        level_strings: tuple[tuple[tuple[str, str], ...], ...] = Level.get(level)
 
         row: int; col: int
         for row, row_string in enumerate(level_strings):
             for col, brick_val in enumerate(row_string):
-                if brick_val != "  ":
+                if brick_val != (" ", " "):
                     Instance(brick_val[0], brick_val[1], (col, row))
 
     def check_for_new_level(self) -> None:
