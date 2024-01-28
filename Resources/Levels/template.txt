@@ -3,6 +3,12 @@
 ## where:
 ##      level_number is a number 0-7, 0 making the brick unbreakable
 ##      powerup is a character indicating which powerup goes in that brick
+## powerups:
+##      l : extra Life
+##      m : Multi ball (splits the ball into 4)
+##      c : Catch (allows you to catch the ball)
+##      g : Gun (gives you a gun)
+##      e : long paddle (Extends the paddle width)
 x_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 |
 |
