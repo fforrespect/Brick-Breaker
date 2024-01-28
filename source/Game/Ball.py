@@ -7,7 +7,10 @@ from Setup import Constants as c, GlobalVars as gv, Colours
 
 
 class Instance:
-    def __init__(self, pos: list[int] | None = None, vel: list[int] | None = None, is_first: bool = False):
+    def __init__(self,
+                 pos: list[int] | None = None,
+                 vel: list[int] | None = None,
+                 is_first: bool = False):
         self.radius: int = c.DEFAULT_BALL_RADIUS
 
         self.cent_pos: list[int] = pos if pos is not None else self.__get_coords_while_stuck()

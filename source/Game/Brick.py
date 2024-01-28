@@ -10,8 +10,7 @@ class Instance:
     def __init__(self,
                  strength: str,
                  powerup: Literal[" ", "l", "m", "c", "g", "e"],
-                 grid_pos: tuple[int, int]
-                 ):
+                 grid_pos: tuple[int, int]):
         self.strength: int = int(strength)
         self.grid_pos: tuple[int, int] = grid_pos
         self.power_up: Literal[" ", "l", "m", "c", "g", "e"] | None = powerup if powerup != " " else None
