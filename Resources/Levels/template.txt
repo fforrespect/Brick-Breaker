@@ -9,6 +9,7 @@
 ##      c : Catch (allows you to catch the ball)
 ##      g : Gun (gives you a gun)
 ##      e : long paddle (Extends the paddle width)
+##      x : [no powerup] can also just be represented as a space
 x_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 |
 |
