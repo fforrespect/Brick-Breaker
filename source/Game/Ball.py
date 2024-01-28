@@ -153,24 +153,26 @@ class Instance:
                 if triangle.point_inside(tuple[float, float](self.cent_pos)):
                     break
 
-            bounce_parameters: dict[
-                int, tuple[
-                    Literal['x', 'y'],
-                    Literal['left', 'right', 'top', 'bottom'],
-                    Literal['left', 'right', 'top', 'bottom']
-                ]
-            ] = {
-                0: ('x', 'left', 'right'),  # left
-                1: ('x', 'right', 'left'),  # right
-                2: ('y', 'top', 'bottom'),  # top
-                3: ('y', 'bottom', 'top'),  # bottom
-            }
+            bounce_parameters: dict[int, tuple[Literal['x', 'y'], Literal['left', 'right', 'top', 'bottom']]] = \
+                {
+                    0: ('x', 'left'),
+                    1: ('x', 'right'),
+                    2: ('y', 'top'),
+                    3: ('y', 'bottom'),
+                }
 
             # Retrieve parameters based on side_hit
-            axis, side_attr, opposite_side = bounce_parameters[i]
+            axis: Literal['x', 'y'] = bounce_parameters[i][0]
+            side: float = getattr(brick_hit, bounce_parameters[i][1])
+            # the function 'f(i) = -(i%2) + 2*(i//2) + 1' gets the opposite side without redefining it
+            # i.e. f(0) = 1,
+            #      f(1) = 0,
+            #      f(2) = 3,
+            #      f(3) = 2
+            opposite_side: Literal['left', 'right', 'top', 'bottom'] = bounce_parameters[-(i%2) + 2*(i//2) + 1][1]
 
             # Call the bounce method with the parameters
-            self.bounce(axis, getattr(brick_hit, side_attr), opposite_side)
+            self.bounce(axis, side, opposite_side)
 
             brick_hit.gets_hit()
             self.can_hit_paddle = True
