@@ -2,7 +2,7 @@
 ## a brick is formatted as: "{level_number}{powerup}"
 ## where:
 ##      level_number is a number 0-7, 0 making the brick unbreakable
-##      powerup is a character indicating with powerup goes in that brick
+##      powerup is a character indicating which powerup goes in that brick
 x_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 |
 |
