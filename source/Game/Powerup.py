@@ -1,4 +1,5 @@
 import pygame
+import time
 from typing import Literal
 
 from Game import Player
@@ -13,7 +14,10 @@ class Instance:
         self.nw_px_pos: list[float] = self.__init_nw_px_pos()
         self.colour: tuple[int, int, int] = Colours.PURPLE
 
+        self.is_falling: bool = False
         self.is_active: bool = False
+
+        self.time_active: float | None = None
 
         gv.all_objects.append(self)
         global all_powerups
@@ -24,7 +28,7 @@ class Instance:
         return pygame.Rect(self.nw_px_pos, c.POWERUP_SIZE)
 
     def draw(self, screen: pygame.Surface) -> None:
-        if self.is_active:
+        if self.is_falling:
             pygame.draw.rect(
                 screen,
                 self.colour,
@@ -34,22 +38,73 @@ class Instance:
             )
 
     def process(self) -> None:
-        self.__fall()
-        self.__check_if_collected()
+        if self.is_falling:
+            self.__fall()
+            self.__check_if_collected()
+
+        if self.is_active:
+            if (time.time() - self.time_active) >= c.POWERUP_ACTIVE_TIME:
+                self.deactivate()
+
+    def stop_drawing(self) -> None:
+        gv.all_objects.remove(self)
 
     def delete(self) -> None:
         global all_powerups
         all_powerups.remove(self)
-        gv.all_objects.remove(self)
+        if self in gv.all_objects:
+            gv.all_objects.remove(self)
 
     def __fall(self) -> None:
-        if self.is_active:
-            self.nw_px_pos[1] += c.POWERUP_FALL_SPEED
+        self.nw_px_pos[1] += c.POWERUP_FALL_SPEED
 
     def __check_if_collected(self) -> None:
         if self.rect.colliderect(Player.active_paddle.rect):
-            self.delete()
-            use_power(self.power)
+            self.stop_drawing()
+            self.is_falling = False
+            self.activate()
+
+    def activate(self):
+        self.is_active = True
+        self.time_active = time.time()
+        print("paddle extended")
+
+        match self.power:
+            # Extra Life
+            case "l":
+                gv.player_lives += 1
+            # Multi ball
+            case "m":
+                pass
+            # Catch
+            case "c":
+                pass
+            # Gun
+            case "g":
+                pass
+            # Extend paddle
+            case "e":
+                Player.active_paddle.extend_paddle_size()
+            case _:
+                raise ValueError("Invalid powerup type")
+
+    def deactivate(self):
+        self.is_active = False
+
+        match self.power:
+            # Catch
+            case "c":
+                pass
+            # Gun
+            case "g":
+                pass
+            # Extend paddle
+            case "e":
+                Player.active_paddle.reset_paddle_size()
+            case _:
+                raise ValueError("Invalid powerup type")
+
+        self.delete()
 
     def __init_nw_px_pos(self) -> list[float]:
         return [(self.grid_pos[0]*c.BRICK_SIZE[0]) + ((c.BRICK_SIZE[0] - c.POWERUP_SIZE[0])/2),
@@ -63,19 +118,3 @@ def process_all() -> None:
     global all_powerups
     for powerup in all_powerups:
         powerup.process()
-
-
-def use_power(power: Literal["l", "m", "c", "g", "e"]):
-    match power:
-        case "l":
-            gv.player_lives += 1
-        case "m":
-            pass
-        case "c":
-            pass
-        case "g":
-            pass
-        case "e":
-            pass
-        case _:
-            raise ValueError("Invalid power type")

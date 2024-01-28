@@ -6,6 +6,7 @@ FPS: int = 60
 # Paddle #
 PADDLE_OFFSET: int = 50
 PADDLE_SIZE: tuple[int, int] = (150, 20)
+PADDLE_EXTENDED_SIZE: tuple[int, int] = (250, 20)
 INITIAL_PADDLE_POSITION: tuple[int, int] = (
     (SCREEN_SIZE[0]//2) - PADDLE_SIZE[0]//2,
     SCREEN_SIZE[1] - PADDLE_OFFSET
@@ -29,6 +30,8 @@ POWERUP_BORDER_RAD: int = 5
 POWERUP_BORDER_WIDTH: int = 2
 
 POWERUP_FALL_SPEED: int = 5
+
+POWERUP_ACTIVE_TIME: float = 5  # seconds
 
 # Lives #
 MAX_LIVES: int = 10

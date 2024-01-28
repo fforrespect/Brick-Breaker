@@ -79,7 +79,7 @@ class Instance:
             self.__check_for_destruction()
 
             if self.powerup is not None:
-                self.powerup.is_active = True
+                self.powerup.is_falling = True
                 self.powerup = None
 
     def __check_for_destruction(self) -> bool:

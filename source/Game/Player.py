@@ -62,6 +62,12 @@ class Paddle:
             if pygame.mouse.get_pressed(num_buttons=3)[0]:
                 self.shoot()
 
+    def extend_paddle_size(self):
+        self.size = c.PADDLE_EXTENDED_SIZE
+
+    def reset_paddle_size(self):
+        self.size = c.PADDLE_SIZE
+
     def reset_pos(self) -> None:
         self.nw_pos = list(c.INITIAL_PADDLE_POSITION)
 
