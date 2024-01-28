@@ -42,7 +42,7 @@ class Instance:
             self.__fall()
             self.__check_if_collected()
 
-        if self.is_active:
+        if self.is_active and self.time_active is not None:
             if (time.time() - self.time_active) >= c.POWERUP_ACTIVE_TIME:
                 self.deactivate()
 
@@ -66,8 +66,6 @@ class Instance:
 
     def activate(self):
         self.is_active = True
-        self.time_active = time.time()
-        print("paddle extended")
 
         match self.power:
             # Extra Life
@@ -84,9 +82,10 @@ class Instance:
                 pass
             # Extend paddle
             case "e":
+                self.time_active = time.time()
                 Player.active_paddle.extend_paddle_size()
             case _:
-                raise ValueError("Invalid powerup type")
+                raise ValueError(f"Invalid powerup type \"{self.power}\"")
 
     def deactivate(self):
         self.is_active = False
@@ -102,7 +101,7 @@ class Instance:
             case "e":
                 Player.active_paddle.reset_paddle_size()
             case _:
-                raise ValueError("Invalid powerup type")
+                raise ValueError(f"Invalid powerup type \"{self.power}\"")
 
         self.delete()
 
