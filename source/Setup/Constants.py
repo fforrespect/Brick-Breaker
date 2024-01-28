@@ -23,6 +23,13 @@ BRICK_SIZE: tuple[float, float] = (SCREEN_SIZE[0]//NUM_OF_BRICKS[0],
 BRICK_BORDER_RAD: int = 5
 BRICK_SPACER: int = 1
 
+# Powerups #
+POWERUP_SIZE: tuple[float, float] = tuple[float, float]([BRICK_SIZE[1]]*2)
+POWERUP_BORDER_RAD: int = 5
+POWERUP_BORDER_WIDTH: int = 2
+
+POWERUP_FALL_SPEED: int = 5
+
 # Lives #
 MAX_LIVES: int = 10
 
