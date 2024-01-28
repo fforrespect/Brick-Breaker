@@ -6,8 +6,8 @@ from Setup import Constants as c, GlobalVars as gv, Colours
 
 
 class Instance:
-    def __init__(self, _type: Literal["l", "m", "c", "g", "e"], grid_pos: tuple[int, int]):
-        self._type: Literal["l", "m", "c", "g", "e"] = _type
+    def __init__(self, power: Literal["l", "m", "c", "g", "e"], grid_pos: tuple[int, int]):
+        self.power: Literal["l", "m", "c", "g", "e"] = power
         self.grid_pos: tuple[int, int] = grid_pos
 
         self.nw_px_pos: list[float] = self.__init_nw_px_pos()
@@ -49,6 +49,7 @@ class Instance:
     def __check_if_collected(self) -> None:
         if self.rect.colliderect(Player.active_paddle.rect):
             self.delete()
+            use_power(self.power)
 
     def __init_nw_px_pos(self) -> list[float]:
         return [(self.grid_pos[0]*c.BRICK_SIZE[0]) + ((c.BRICK_SIZE[0] - c.POWERUP_SIZE[0])/2),
@@ -62,3 +63,19 @@ def process_all() -> None:
     global all_powerups
     for powerup in all_powerups:
         powerup.process()
+
+
+def use_power(power: Literal["l", "m", "c", "g", "e"]):
+    match power:
+        case "l":
+            gv.player_lives += 1
+        case "m":
+            pass
+        case "c":
+            pass
+        case "g":
+            pass
+        case "e":
+            pass
+        case _:
+            raise ValueError("Invalid power type")
