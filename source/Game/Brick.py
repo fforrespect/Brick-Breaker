@@ -7,10 +7,14 @@ from Setup import Constants as c, GlobalVars as gv, Colours
 
 
 class Instance:
-    def __init__(self, strength: str, powerup: str, grid_pos: tuple[int, int]):
+    def __init__(self,
+                 strength: str,
+                 powerup: Literal[" ", "l", "m", "c", "g", "e"],
+                 grid_pos: tuple[int, int]
+                 ):
         self.strength: int = int(strength)
         self.grid_pos: tuple[int, int] = grid_pos
-        self.power_up: str = powerup if powerup != " " else None
+        self.power_up: Literal[" ", "l", "m", "c", "g", "e"] | None = powerup if powerup != " " else None
 
         self.is_unbreakable: bool = self.strength == 0
 
