@@ -61,6 +61,8 @@ class Instance:
 
     def delete(self) -> None:
         gv.all_objects.remove(self)
+        global all_balls
+        all_balls.remove(self)
 
     def update_cent(self, x: float = None, y: float = None) -> None:
         self.cent_pos = [x if x is not None else self.cent_pos[0],
