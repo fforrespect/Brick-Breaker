@@ -59,7 +59,6 @@ class Instance:
     @property
     def bottom(self) -> float:
         return self.nw_px_pos[1] + c.BRICK_SIZE[1]
-    # End Directional Properties #
 
     @property
     def is_destroyed(self) -> bool:

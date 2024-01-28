@@ -30,6 +30,7 @@ class Instance:
         )
         return pygame.Rect(nw_pos, (self.radius*2, self.radius*2))
 
+    # Directional Properties #
     @property
     def left(self) -> float:
         return self.cent_pos[0] - self.radius
