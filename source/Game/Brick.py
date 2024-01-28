@@ -1,7 +1,7 @@
 import pygame
 from typing import Literal
 
-from Game import Ball, Player
+from Game import Ball, Player, Powerup
 from Process import Level, Triangle
 from Setup import Constants as c, GlobalVars as gv, Colours
 
@@ -13,11 +13,13 @@ class Instance:
                  grid_pos: tuple[int, int]):
         self.strength: int = int(strength)
         self.grid_pos: tuple[int, int] = grid_pos
-        self.powerup: Literal["l", "m", "c", "g", "e"] | None = \
-            None \
-                if powerup in (" ", "x") \
-                else \
-            Literal["l", "m", "c", "g", "e"](powerup)
+        self.powerup: Powerup.Instance | None = None if powerup in (" ", "x") \
+            else (
+            Powerup.Instance(
+                powerup,
+                self.grid_pos
+            )
+        )
 
         self.is_unbreakable: bool = self.strength == 0
 
@@ -75,6 +77,10 @@ class Instance:
         if not self.is_unbreakable:
             self.strength -= 1
             self.__check_for_destruction()
+
+            if self.powerup is not None:
+                self.powerup.is_active = True
+                self.powerup = None
 
     def __check_for_destruction(self) -> bool:
         """

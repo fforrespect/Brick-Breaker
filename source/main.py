@@ -2,7 +2,7 @@ import pygame
 
 from Display import Window, Lives
 from Event import GameOver
-from Game import Player, Ball, Brick
+from Game import Player, Ball, Brick, Powerup
 from Setup import Constants as c
 
 pygame.init()
@@ -23,5 +23,6 @@ while True:
     Ball.process_all()
     Brick.grid.check_for_new_level()
     Lives.check_exceeded_max_lives()
+    Powerup.process_all()
 
     Window.display(screen)
