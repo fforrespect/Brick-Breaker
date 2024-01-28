@@ -1,6 +1,7 @@
 import pygame
 from typing import Literal
 
+from Game import Player
 from Setup import Constants as c, GlobalVars as gv, Colours
 
 
@@ -32,9 +33,22 @@ class Instance:
                 c.POWERUP_BORDER_RAD
             )
 
-    def fall(self) -> None:
+    def process(self) -> None:
+        self.__fall()
+        self.__check_if_collected()
+
+    def delete(self) -> None:
+        global all_powerups
+        all_powerups.remove(self)
+        gv.all_objects.remove(self)
+
+    def __fall(self) -> None:
         if self.is_active:
             self.nw_px_pos[1] += c.POWERUP_FALL_SPEED
+
+    def __check_if_collected(self) -> None:
+        if self.rect.colliderect(Player.active_paddle.rect):
+            self.delete()
 
     def __init_nw_px_pos(self) -> list[float]:
         return [(self.grid_pos[0]*c.BRICK_SIZE[0]) + ((c.BRICK_SIZE[0] - c.POWERUP_SIZE[0])/2),
@@ -47,4 +61,4 @@ all_powerups: list[Instance] = []
 def process_all() -> None:
     global all_powerups
     for powerup in all_powerups:
-        powerup.fall()
+        powerup.process()
